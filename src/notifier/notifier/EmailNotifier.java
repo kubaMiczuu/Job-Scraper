@@ -1,4 +1,4 @@
-package notifier;
+package notifier.notifier;
 
 public class EmailNotifier {
 }

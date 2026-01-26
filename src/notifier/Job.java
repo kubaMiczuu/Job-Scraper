@@ -1,27 +1,21 @@
 package notifier;
 
-import java.util.Date;
-
 public class Job {
 
-    protected int id;
     protected String title;
     protected String company;
     protected String location;
     protected String url;
-    protected Date date;
+    protected String date;
+    protected String jobState;
 
-    public Job(int id, String title, String company, String location, String url, Date date) {
-        setId(id);
+    public Job(String title, String company, String location, String url, String date, String jobState) {
         setTitle(title);
         setCompany(company);
         setLocation(location);
         setUrl(url);
         setDate(date);
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        setJobState(jobState);
     }
 
     public void setTitle(String title) {
@@ -40,7 +34,9 @@ public class Job {
         this.url = url;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
+
+    public void setJobState(String jobState) {this.jobState = jobState;}
 }

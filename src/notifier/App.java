@@ -1,25 +1,17 @@
 package notifier;
 
-import java.util.List;
+import notifier.notifier.EmailNotifier;
+import notifier.provider.FakeJobProvider;
 
-public class App extends FakeJobProvider {
-
-    private final List<Job> jobs;
-
-    public App() {
-        super();
-        this.jobs = super.getJobs();
-    }
-
+public class App {
     public static void main(String[] args) {
-        App app = new App();
-        for(int i=0;i<10;i++){
-            Job currentJob = app.jobs.get(i);
-            System.out.print(currentJob.id+", ");
-            System.out.print(currentJob.title+", ");
-            System.out.print(currentJob.company+", ");
-            System.out.print(currentJob.location+", ");
-            System.out.print(currentJob.date+"\n");
-        }
+        FakeJobProvider provider = new FakeJobProvider();
+
+        EmailNotifier email = new EmailNotifier();
+
+        NotificationService service = new NotificationService(provider, email);
+
+        Scheduler scheduler = new Scheduler(service);
+        scheduler.start();
     }
 }
