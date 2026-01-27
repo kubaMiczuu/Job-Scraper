@@ -1,5 +1,6 @@
 package notifier;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import static java.util.concurrent.TimeUnit.*;
@@ -14,7 +15,13 @@ public class Scheduler {
     }
 
     public void start() {
-        Runnable sender = () -> service.runNotificationCycle();
+        Runnable sender = () -> {
+            try {
+                service.runNotificationCycle();
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
         scheduler.scheduleAtFixedRate(sender, 10, 10, SECONDS);
     }
 }
