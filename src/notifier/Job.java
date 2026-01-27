@@ -2,12 +2,12 @@ package notifier;
 
 public class Job {
 
-    protected String title;
-    protected String company;
-    protected String location;
-    protected String url;
-    protected String date;
-    protected String jobState;
+    public String title;
+    public String company;
+    public String location;
+    public String url;
+    public String date;
+    public String jobState;
 
     public Job(String title, String company, String location, String url, String date, String jobState) {
         setTitle(title);
