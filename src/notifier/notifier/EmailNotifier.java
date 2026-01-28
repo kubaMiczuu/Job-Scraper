@@ -11,30 +11,32 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Properties;
 
-public class EmailNotifier {
-    String apiKey;
-    String url = "https://api.resend.com/emails";
-    String from = "onboarding@resend.dev";
-    String to;
-    String subject = "Job Offers";
+public class EmailNotifier implements Notifier {
+    private final String apiKey;
+    private final String to;
 
     public EmailNotifier() {
         Properties props = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("resources/config.properties")) {
             if (input == null) {
-                throw new RuntimeException("Nie znaleziono pliku config.properties");
+                throw new RuntimeException("Couldn't find a config.properties");
             }
             props.load(input);
         } catch (IOException e) {
-            throw new RuntimeException("Błąd ładowania config.properties", e);
+            throw new RuntimeException("Loading config.properties failed", e);
         }
 
         this.apiKey = props.getProperty("EMAIL_API_KEY");
         this.to = props.getProperty("EMAIL_ADDRESS");
     }
 
+    @Override
     public void send(List<Job> jobs) throws IOException, InterruptedException {
-        StringBuilder html = getString(jobs);
+        String url = "https://api.resend.com/emails";
+        String from = "onboarding@resend.dev";
+        String subject = "Job Offers";
+
+        String html = getHTML(jobs).toString().replace("\"", "\\\"");
 
         String json = "{"
                 + "\"from\": \"" + from + "\","
@@ -52,31 +54,57 @@ public class EmailNotifier {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Email Sent");
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            System.out.print("Email sent! ");
+        } else {
+            System.out.print("Failed to send an Email! ");
+        }
+        System.out.print("Status: "+response.statusCode()+"\n");
     }
 
-    private StringBuilder getString(List<Job> jobs) {
+    private StringBuilder getHTML(List<Job> jobs) {
         StringBuilder html = new StringBuilder(
-                "<table><th>"
-                        +"<td>Id</td>"
-                        +"<td>Title</td>"
-                        +"<td>Company</td>"
-                        +"<td>Location</td>"
-                        +"<td>URL</td>"
-                        +"<td>Date</td></th>"
+                "<table style=\"border-collapse:collapse; width:100%; font-family:Arial, sans-serif;\">"
+                        + "<tr>"
+                        + "<th style=\"background-color:#4CAF50; color:white; padding:8px; border:1px solid #ddd;\">Id</th>"
+                        + "<th style=\"background-color:#4CAF50; color:white; padding:8px; border:1px solid #ddd;\">Title</th>"
+                        + "<th style=\"background-color:#4CAF50; color:white; padding:8px; border:1px solid #ddd;\">Company</th>"
+                        + "<th style=\"background-color:#4CAF50; color:white; padding:8px; border:1px solid #ddd;\">Location</th>"
+                        + "<th style=\"background-color:#4CAF50; color:white; padding:8px; border:1px solid #ddd;\">URL</th>"
+                        + "<th style=\"background-color:#4CAF50; color:white; padding:8px; border:1px solid #ddd;\">Date</th>"
+                        + "</tr>"
         );
-        for(int i = 0; i < jobs.size(); i++) {
+
+        for (int i = 0; i < jobs.size(); i++) {
             Job job = jobs.get(i);
-            html.append("<tr>");
-            html.append("<td>").append(i+1).append("</td>");
-            html.append("<td>").append(job.title).append("</td>");
-            html.append("<td>").append(job.company).append("</td>");
-            html.append("<td>").append(job.location).append("</td>");
-            html.append("<td>").append(job.url).append("</td>");
-            html.append("<td>").append(job.date).append("</td>");
-            html.append("</tr></table>");
+
+            String rowColor = (i % 2 == 0) ? "#f9f9f9" : "#ffffff";
+
+            html.append("<tr style=\"background-color:").append(rowColor).append(";\">");
+            html.append("<td style=\"padding:8px; border:1px solid #ddd;\">")
+                    .append(i + 1)
+                    .append("</td>");
+            html.append("<td style=\"padding:8px; border:1px solid #ddd;\">")
+                    .append(job.title)
+                    .append("</td>");
+            html.append("<td style=\"padding:8px; border:1px solid #ddd;\">")
+                    .append(job.company)
+                    .append("</td>");
+            html.append("<td style=\"padding:8px; border:1px solid #ddd;\">")
+                    .append(job.location)
+                    .append("</td>");
+            html.append("<td style=\"padding:8px; border:1px solid #ddd;\">")
+                    .append("<a href=\"").append(job.url).append("\">Link</a>")
+                    .append("</td>");
+            html.append("<td style=\"padding:8px; border:1px solid #ddd;\">")
+                    .append(job.date)
+                    .append("</td>");
+            html.append("</tr>");
         }
+        html.append("</table>");
+
         return html;
     }
 }

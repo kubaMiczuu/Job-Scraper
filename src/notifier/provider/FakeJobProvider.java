@@ -5,25 +5,25 @@ import notifier.Job;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FakeJobProvider {
+public class FakeJobProvider implements JobProvider{
 
-    public List<Job> allJobs = new ArrayList<>();
     public List<Job> newJobs = new ArrayList<>();
+    public List<Job> allJobs = new ArrayList<>();
 
     public FakeJobProvider() {
         for (int i = 0; i < 10; i++) {
-            allJobs.add(new Job("Job" + i, "Company" + i, "Location" + i, "Url" + i, "2026-01-26T11:00:03.152958200Z", "NEW"));
+            newJobs.add(new Job("Job" + i, "Company" + i, "Location" + i, "https://job.com", "2026-01-26", "NEW"));
         }
-        newJobs.add(allJobs.getLast());
     }
 
-    public List<Job> getAllJobs() {
-        return allJobs;
-    }
-
+    @Override
     public List<Job> getNewJobs() {
         return newJobs;
     }
 
+    @Override
+    public List<Job> getAllJobs() {
+        return newJobs;
+    }
 
 }
