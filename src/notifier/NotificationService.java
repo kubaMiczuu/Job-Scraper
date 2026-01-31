@@ -1,23 +1,23 @@
 package notifier;
 
-import notifier.notifier.Notifier;
-import notifier.provider.JobProvider;
+import notifier.notifier.INotifier;
+import notifier.provider.IJobProvider;
 
 import java.io.IOException;
 
 public class NotificationService {
-    private final JobProvider provider;
-    private final Notifier emailNotifier;
-    private final Notifier discordNotifier;
+    private final IJobProvider provider;
+    private final INotifier emailINotifier;
+    private final INotifier discordINotifier;
 
-    public NotificationService(JobProvider provider, Notifier emailNotifier, Notifier discordNotifier) {
+    public NotificationService(IJobProvider provider, INotifier emailINotifier, INotifier discordINotifier) {
         this.provider = provider;
-        this.emailNotifier = emailNotifier;
-        this.discordNotifier = discordNotifier;
+        this.emailINotifier = emailINotifier;
+        this.discordINotifier = discordINotifier;
     }
 
     public void runNotificationCycle() throws IOException, InterruptedException {
-        emailNotifier.send(provider.getNewJobs());
-        discordNotifier.send(provider.getNewJobs());
+        emailINotifier.send(provider.getNewJobs());
+        discordINotifier.send(provider.getNewJobs());
     }
 }

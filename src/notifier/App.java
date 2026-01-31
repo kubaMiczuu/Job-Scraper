@@ -1,17 +1,17 @@
 package notifier;
 
-import notifier.notifier.DiscordNotifier;
-import notifier.notifier.EmailNotifier;
-import notifier.notifier.Notifier;
-import notifier.provider.FakeJobProvider;
-import notifier.provider.JobProvider;
+import notifier.notifier.DiscordINotifier;
+import notifier.notifier.EmailINotifier;
+import notifier.notifier.INotifier;
+import notifier.provider.FakeIJobProvider;
+import notifier.provider.IJobProvider;
 
 public class App {
     public static void main(String[] args) {
-        JobProvider provider = new FakeJobProvider();
+        IJobProvider provider = new FakeIJobProvider();
 
-        Notifier email = new EmailNotifier();
-        Notifier discord = new DiscordNotifier();
+        INotifier email = new EmailINotifier();
+        INotifier discord = new DiscordINotifier();
 
         NotificationService service = new NotificationService(provider, email, discord);
 

@@ -11,11 +11,11 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Properties;
 
-public class EmailNotifier implements Notifier {
+public class EmailINotifier implements INotifier {
     private final String apiKey;
     private final String to;
 
-    public EmailNotifier() {
+    public EmailINotifier() {
         Properties props = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("resources/config.properties")) {
             if (input == null) {

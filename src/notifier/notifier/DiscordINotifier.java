@@ -11,11 +11,11 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Properties;
 
-public class DiscordNotifier implements Notifier{
+public class DiscordINotifier implements INotifier {
     private final String discordWebhookUrl;
 
 
-    public DiscordNotifier() {
+    public DiscordINotifier() {
         Properties props = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("resources/config.properties")) {
             if (input == null) {
