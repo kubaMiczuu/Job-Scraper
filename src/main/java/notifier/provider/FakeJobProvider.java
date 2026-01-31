@@ -5,7 +5,7 @@ import notifier.Job;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FakeJobProvider implements JobProvider{
+public class FakeJobProvider implements IJobProvider {
 
     public List<Job> newJobs = new ArrayList<>();
     public List<Job> allJobs = new ArrayList<>();

@@ -1,6 +1,8 @@
 package notifier.notifier;
 
 import notifier.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,27 +13,35 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Properties;
 
-public class EmailNotifier implements Notifier {
+public class EmailINotifier implements INotifier {
+    private static final Logger logger =  LoggerFactory.getLogger(EmailINotifier.class);
+
     private final String apiKey;
     private final String to;
 
-    public EmailNotifier() {
+    public EmailINotifier() {
         Properties props = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("resources/config.properties")) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
             if (input == null) {
+                logger.error("Couldn't find a config.properties");
                 throw new RuntimeException("Couldn't find a config.properties");
             }
             props.load(input);
         } catch (IOException e) {
-            throw new RuntimeException("Loading config.properties failed", e);
+            logger.error("Loading config.properties failed: ", e);
+            throw new RuntimeException("Loading config.properties failed: ", e);
         }
 
         this.apiKey = props.getProperty("EMAIL_API_KEY");
         this.to = props.getProperty("EMAIL_ADDRESS");
+
+        logger.info("EmailNotifier initialized successfully");
     }
 
     @Override
     public void send(List<Job> jobs) throws IOException, InterruptedException {
+        logger.info("Sending email notifications to: {} with {} jobs", to, jobs.size());
+
         String url = "https://api.resend.com/emails";
         String from = "onboarding@resend.dev";
         String subject = "Job Offers";
@@ -54,14 +64,16 @@ public class EmailNotifier implements Notifier {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            System.out.print("Email sent! ");
-        } else {
-            System.out.print("Failed to send an Email! ");
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                logger.info("Email sent! to: {}", to);
+            } else {
+                logger.info("Failed to send an Email! to: {}. Status: {}", to, response.statusCode());
+            }
+        } catch (IOException e) {
+            logger.error("Failed to send HTTP Request", e);
         }
-        System.out.print("Status: "+response.statusCode()+"\n");
     }
 
     private StringBuilder getHTML(List<Job> jobs) {

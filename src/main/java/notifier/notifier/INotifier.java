@@ -5,6 +5,6 @@ import notifier.Job;
 import java.io.IOException;
 import java.util.List;
 
-public interface Notifier {
+public interface INotifier {
     public void send(List<Job> jobs) throws IOException, InterruptedException;
 }
