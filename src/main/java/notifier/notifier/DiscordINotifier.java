@@ -1,6 +1,8 @@
 package notifier.notifier;
 
 import notifier.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,24 +14,31 @@ import java.util.List;
 import java.util.Properties;
 
 public class DiscordINotifier implements INotifier {
-    private final String discordWebhookUrl;
+    private static final Logger logger =  LoggerFactory.getLogger(DiscordINotifier.class);
 
+    private final String discordWebhookUrl;
 
     public DiscordINotifier() {
         Properties props = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("resources/config.properties")) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
             if (input == null) {
+                logger.error("Couldn't find a config.properties");
                 throw new RuntimeException("Couldn't find a config.properties");
             }
             props.load(input);
         } catch (IOException e) {
+            logger.error("Loading config.properties failed", e);
             throw new RuntimeException("Loading config.properties failed", e);
         }
         this.discordWebhookUrl = props.getProperty("DISCORD_WEBHOOK_URL");
+
+        logger.info("DiscordNotifier initialized successfully");
     }
 
     @Override
     public void send(List<Job> jobs) throws IOException, InterruptedException {
+        logger.info("Sending Discord notifications with {} jobs", jobs.size());
+
         String jobsAsJson = formatJobsAsEmbed(jobs);
 
         HttpClient client = HttpClient.newHttpClient();
@@ -39,14 +48,16 @@ public class DiscordINotifier implements INotifier {
                 .POST(HttpRequest.BodyPublishers.ofString(jobsAsJson))
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            System.out.print("Discord message sent! ");
-        } else {
-            System.out.print("Failed to send a Discord message! ");
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                logger.info("Discord message sent!");
+            } else {
+                logger.info("Failed to send a Discord message! Status: {}",response.statusCode());
+            }
+        } catch (IOException e) {
+            logger.error("Failed to send HTTP Request", e);
         }
-        System.out.print("Status: "+response.statusCode()+"\n");
     }
 
     public String formatJobsAsEmbed(List<Job> jobs) {

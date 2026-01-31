@@ -6,19 +6,20 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/app.log</file>
-        <encoder>
-            <pattern>%d{HH:mm:ss} [%level] %logger: %msg%n</pattern>
-        </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/app-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss} [%level] %logger: %msg%n</pattern>
+        </encoder>
     </appender>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
+
 </configuration>
