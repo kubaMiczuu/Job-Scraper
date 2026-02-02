@@ -1,10 +1,12 @@
-package notifier.provider;
+package com.notifier.provider;
 
-import notifier.Job;
+import com.notifier.model.Job;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class FakeJobProvider implements IJobProvider {
 
     public List<Job> newJobs = new ArrayList<>();

@@ -1,66 +1,58 @@
-package notifier.notifier;
+package com.notifier.notifier;
 
-import notifier.Job;
+import com.notifier.model.Job;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Properties;
 
+@Component
 public class DiscordINotifier implements INotifier {
     private static final Logger logger =  LoggerFactory.getLogger(DiscordINotifier.class);
 
     private final String discordWebhookUrl;
 
-    public DiscordINotifier() {
-        Properties props = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                logger.error("Couldn't find a config.properties");
-                throw new RuntimeException("Couldn't find a config.properties");
-            }
-            props.load(input);
-        } catch (IOException e) {
-            logger.error("Loading config.properties failed", e);
-            throw new RuntimeException("Loading config.properties failed", e);
-        }
-        this.discordWebhookUrl = props.getProperty("DISCORD_WEBHOOK_URL");
+    public DiscordINotifier(@Value("${discord.webhook.api}") String discordWebhookUrl) {
+        this.discordWebhookUrl = discordWebhookUrl;
 
         logger.info("DiscordNotifier initialized successfully");
     }
 
     @Override
-    public void send(List<Job> jobs) throws IOException, InterruptedException {
+    public void send(@NonNull List<Job> jobs) throws InterruptedException {
         logger.info("Sending Discord notifications with {} jobs", jobs.size());
 
         String jobsAsJson = formatJobsAsEmbed(jobs);
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(discordWebhookUrl))
-                .header("Content-Type","application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jobsAsJson))
-                .build();
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(discordWebhookUrl))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jobsAsJson))
+                    .build();
 
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                logger.info("Discord message sent!");
-            } else {
-                logger.info("Failed to send a Discord message! Status: {}",response.statusCode());
+            try {
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                    logger.info("Discord message sent!");
+                } else {
+                    logger.info("Failed to send a Discord message! Status: {}", response.statusCode());
+                }
+            } catch (IOException e) {
+                logger.error("Failed to send HTTP Request", e);
             }
-        } catch (IOException e) {
-            logger.error("Failed to send HTTP Request", e);
         }
     }
 
-    public String formatJobsAsEmbed(List<Job> jobs) {
+    public String formatJobsAsEmbed(@NonNull List<Job> jobs) {
         StringBuilder json = new StringBuilder();
         json.append("{\"content\":\"New jobs here!!\",");
         json.append("\"embeds\":[{");
@@ -101,7 +93,7 @@ public class DiscordINotifier implements INotifier {
         return  json.toString();
     }
 
-    private String escapeJson(String text) {
+    private @NonNull String escapeJson(String text) {
         if (text == null) return "";
 
         return text

@@ -1,4 +1,4 @@
-package notifier;
+package com.notifier.model;
 
 public class Job {
 

@@ -1,45 +1,36 @@
-package notifier.notifier;
+package com.notifier.notifier;
 
-import notifier.Job;
+import com.notifier.model.Job;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Properties;
 
+@Component
 public class EmailINotifier implements INotifier {
     private static final Logger logger =  LoggerFactory.getLogger(EmailINotifier.class);
 
     private final String apiKey;
     private final String to;
 
-    public EmailINotifier() {
-        Properties props = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                logger.error("Couldn't find a config.properties");
-                throw new RuntimeException("Couldn't find a config.properties");
-            }
-            props.load(input);
-        } catch (IOException e) {
-            logger.error("Loading config.properties failed: ", e);
-            throw new RuntimeException("Loading config.properties failed: ", e);
-        }
-
-        this.apiKey = props.getProperty("EMAIL_API_KEY");
-        this.to = props.getProperty("EMAIL_ADDRESS");
+    public EmailINotifier(@Value("${email.api.key}") String apiKey, @Value("${email.address}") String to) {
+        this.apiKey = apiKey;
+        this.to = to;
 
         logger.info("EmailNotifier initialized successfully");
+
     }
 
     @Override
-    public void send(List<Job> jobs) throws IOException, InterruptedException {
+    public void send(@NonNull List<Job> jobs) throws InterruptedException {
         logger.info("Sending email notifications to: {} with {} jobs", to, jobs.size());
 
         String url = "https://api.resend.com/emails";
@@ -55,28 +46,29 @@ public class EmailINotifier implements INotifier {
                 + "\"html\": \"" + html + "\""
                 + "}";
 
-        HttpClient client = HttpClient.newHttpClient();
+        try (HttpClient client = HttpClient.newHttpClient()) {
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Authorization", "Bearer "+apiKey)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + apiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
 
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                logger.info("Email sent! to: {}", to);
-            } else {
-                logger.info("Failed to send an Email! to: {}. Status: {}", to, response.statusCode());
+            try {
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                    logger.info("Email sent! to: {}", to);
+                } else {
+                    logger.info("Failed to send an Email! to: {}. Status: {}", to, response.statusCode());
+                }
+            } catch (IOException e) {
+                logger.error("Failed to send HTTP Request", e);
             }
-        } catch (IOException e) {
-            logger.error("Failed to send HTTP Request", e);
         }
     }
 
-    private StringBuilder getHTML(List<Job> jobs) {
+    private @NonNull StringBuilder getHTML(@NonNull List<Job> jobs) {
         StringBuilder html = new StringBuilder(
                 "<table style=\"border-collapse:collapse; width:100%; font-family:Arial, sans-serif;\">"
                         + "<tr>"
