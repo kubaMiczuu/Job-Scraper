@@ -11,7 +11,7 @@ target/
 
 # Env / secrets
 .env
-src/main/resources/config.properties
+src/main/resources/application.properties
 application.properties
 
 # OS
