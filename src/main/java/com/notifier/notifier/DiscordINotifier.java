@@ -14,18 +14,34 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+/**
+ * A Discord-based implementation of the {@link INotifier} interface.
+ * Dispatches job notifications to a Discord channel using Webhooks.
+ * The messages are formatted as Rich Embeds with emojis and structured fields.
+ */
 @Component
 public class DiscordINotifier implements INotifier {
     private static final Logger logger =  LoggerFactory.getLogger(DiscordINotifier.class);
 
     private final String discordWebhookUrl;
 
+    /**
+     * Initializes the Discord notifier with a target Webhook URL.
+     * @param discordWebhookUrl The URL of the Discord webhook, injected from properties.
+     */
     public DiscordINotifier(@Value("${discord.webhook.api}") String discordWebhookUrl) {
         this.discordWebhookUrl = discordWebhookUrl;
 
         logger.info("DiscordNotifier initialized successfully");
     }
 
+    /**
+     * Sends the job listings to Discord.
+     * Converts the list of jobs into a JSON payload structure required by Discord Webhooks.
+     *
+     * @param jobs A non-null list of {@link Job} objects.
+     * @throws InterruptedException If the HTTP communication is interrupted.
+     */
     @Override
     public void send(@NonNull List<Job> jobs) throws InterruptedException {
         logger.info("Sending Discord notifications with {} jobs", jobs.size());
@@ -52,6 +68,13 @@ public class DiscordINotifier implements INotifier {
         }
     }
 
+    /**
+     * Transforms a list of {@link Job} objects into a Discord Embed JSON string.
+     * Uses emojis for better visualization and escapes special characters to ensure valid JSON.
+     *
+     * @param jobs The list of jobs to be formatted.
+     * @return A string representing the JSON payload for Discord.
+     */
     public String formatJobsAsEmbed(@NonNull List<Job> jobs) {
         StringBuilder json = new StringBuilder();
         json.append("{\"content\":\"New jobs here!!\",");
@@ -69,14 +92,18 @@ public class DiscordINotifier implements INotifier {
             json.append("{");
 
             json.append("\"name\":\"");
-            json.append(escapeJson(job.title));
+            json.append(escapeJson(job.getTitle()));
             json.append("\",");
 
             json.append("\"value\":\"");
-            json.append("\uD83C\uDFE2 ").append(escapeJson(job.company)).append("\\n");
-            json.append("\uD83D\uDCCD ").append(escapeJson(job.location)).append("\\n");
-            json.append("⏰ ").append(escapeJson(job.date)).append("\\n");
-            json.append("\uD83D\uDD17 ").append("[Visit!](").append(escapeJson(job.url)).append(")");
+            json.append("\uD83C\uDFE2 ").append(escapeJson(job.getCompany())).append("\\n");
+            json.append("\uD83D\uDCCD ").append(escapeJson(job.getLocation())).append("\\n");
+            if(job.getSeniority() != null) json.append("\uD83C\uDFC5 ").append(escapeJson(job.getSeniority())).append("\\n");
+            if(job.getEmploymentType() != null) json.append("\uD83D\uDCBC ").append(escapeJson(job.getEmploymentType())).append("\\n");
+            if(job.getSalary() != null) json.append("\uD83D\uDCB5 ").append(escapeJson(job.getSalary())).append("\\n");
+            json.append("\uD83D\uDCC5 ").append(escapeJson(job.getPublishedDate())).append("\\n");
+            if(job.getSource() != null) json.append("\uD83D\uDD0E ").append(escapeJson(job.getSource())).append("\\n");
+            json.append("\uD83D\uDD17 ").append("[Visit!](").append(escapeJson(job.getUrl())).append(")");
             json.append("\",");
 
             json.append("\"inline\":false");
@@ -93,6 +120,13 @@ public class DiscordINotifier implements INotifier {
         return  json.toString();
     }
 
+    /**
+     * Escapes special characters in strings to prevent JSON syntax errors.
+     * Matches standard JSON escaping rules for backslashes, quotes, and newlines.
+     *
+     * @param text The raw string to be escaped.
+     * @return An escaped version of the input string, or an empty string if input is null.
+     */
     private @NonNull String escapeJson(String text) {
         if (text == null) return "";
 

@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Service responsible for coordinating the job notification process.
+ * It fetches new job offers from the provider and broadcasts them to all
+ * registered notification channels.
+ */
 @Service
 public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
@@ -18,6 +23,13 @@ public class NotificationService {
     private final IJobProvider provider;
     private final List<INotifier> notifiers;
 
+    /**
+     * Constructs the service with a job provider and a list of available notifiers.
+     * Spring automatically injects all beans implementing the {@link INotifier} interface.
+     *
+     * @param provider  The source of job postings.
+     * @param notifiers A list of communication channels (e.g., Discord, Email).
+     */
     @Autowired
     public NotificationService(IJobProvider provider, List<INotifier> notifiers) {
         this.provider = provider;
@@ -25,6 +37,14 @@ public class NotificationService {
         logger.info("NotificationService initialized successfully with {} notifiers", notifiers.size());
     }
 
+    /**
+     * Executes a single notification cycle.
+     * Fetches new jobs and, if any are found, iterates through all registered
+     * notifiers to deliver the updates.
+     *
+     * @throws IOException          If an I/O error occurs during data retrieval or sending.
+     * @throws InterruptedException If the process is interrupted during execution.
+     */
     public void runNotificationCycle() throws IOException, InterruptedException {
         List<Job> jobs = provider.getNewJobs();
 
