@@ -1,8 +1,8 @@
-package com.notifier.service;
+package pl.jobscraper.core.application.service;
 
-import com.notifier.model.Job;
-import com.notifier.notifier.INotifier;
-import com.notifier.provider.IJobProvider;
+import pl.jobscraper.core.domain.model.Job;
+import pl.jobscraper.core.infrastructure.notifier.INotifier;
+import pl.jobscraper.core.domain.repository.IJobProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

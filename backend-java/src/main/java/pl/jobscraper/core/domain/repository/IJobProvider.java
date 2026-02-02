@@ -1,6 +1,6 @@
-package com.notifier.provider;
+package pl.jobscraper.core.domain.repository;
 
-import com.notifier.model.Job;
+import pl.jobscraper.core.domain.model.Job;
 
 import java.util.List;
 

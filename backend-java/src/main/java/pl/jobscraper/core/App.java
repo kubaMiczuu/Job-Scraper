@@ -1,4 +1,4 @@
-package com.notifier;
+package pl.jobscraper.core;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +17,7 @@ public class App {
      * Starts the Spring Boot application.
      * @param args Command line arguments passed to the application.
      */
-    static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
 }

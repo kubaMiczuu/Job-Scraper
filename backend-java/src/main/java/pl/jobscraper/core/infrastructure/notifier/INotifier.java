@@ -1,6 +1,6 @@
-package com.notifier.notifier;
+package pl.jobscraper.core.infrastructure.notifier;
 
-import com.notifier.model.Job;
+import pl.jobscraper.core.domain.model.Job;
 
 import java.io.IOException;
 import java.util.List;

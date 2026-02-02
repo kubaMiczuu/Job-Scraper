@@ -1,17 +1,18 @@
 # IntelliJ
-.idea/
+backend-java/.idea/
+.idea/*
 *.iml
 
 # Build
-out/
-target/
+backend-java/out
+backend-java/target
 
 # Logs
 *.log
 
 # Env / secrets
 .env
-src/main/resources/application.properties
+backend-java/src/main/resources/application.properties
 application.properties
 
 # OS

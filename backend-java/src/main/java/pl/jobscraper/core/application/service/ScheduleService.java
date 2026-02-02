@@ -1,4 +1,4 @@
-package com.notifier.service;
+package pl.jobscraper.core.application.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

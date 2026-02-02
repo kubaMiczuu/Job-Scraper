@@ -1,6 +1,6 @@
-package com.notifier.notifier;
+package pl.jobscraper.core.infrastructure.notifier;
 
-import com.notifier.model.Job;
+import pl.jobscraper.core.domain.model.Job;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

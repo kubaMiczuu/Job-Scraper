@@ -1,4 +1,4 @@
-package com.notifier.model;
+package pl.jobscraper.core.domain.model;
 
 /**
  * Represents a job posting entity within the notification system.
