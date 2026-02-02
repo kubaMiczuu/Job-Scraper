@@ -22,5 +22,5 @@ public interface HashingService {
      * @return 64-character hexadecimal SHA-256 hash (lowercase)
      * @throws IllegalArgumentException if input is null
      */
-    public String sha256Hex(String input);
+    String sha256Hex(String input);
 }
