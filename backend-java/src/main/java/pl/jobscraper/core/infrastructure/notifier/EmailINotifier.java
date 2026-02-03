@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An email-based implementation of the {@link INotifier} interface.
@@ -63,25 +64,24 @@ public class EmailINotifier implements INotifier {
                 + "\"html\": \"" + html + "\""
                 + "}";
 
-        try (HttpClient client = HttpClient.newHttpClient()) {
+        HttpClient client = HttpClient.newHttpClient();
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .header("Authorization", "Bearer " + apiKey)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
-                    .build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
 
-            try {
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                    logger.info("Email sent! to: {}", to);
-                } else {
-                    logger.info("Failed to send an Email! to: {}. Status: {}", to, response.statusCode());
-                }
-            } catch (IOException e) {
-                logger.error("Failed to send HTTP Request", e);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                logger.info("Email sent! to: {}", to);
+            } else {
+                logger.info("Failed to send an Email! to: {}. Status: {}", to, response.statusCode());
             }
+        } catch (IOException e) {
+            logger.error("Failed to send HTTP Request", e);
         }
     }
 

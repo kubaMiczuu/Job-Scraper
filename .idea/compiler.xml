@@ -6,13 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="job-scraper" />
+        <module name="job-scraper-core" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="job-scraper" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="job-scraper" options="-parameters" />
+      <module name="job-scraper-core" options="-parameters" />
     </option>
   </component>
 </project>

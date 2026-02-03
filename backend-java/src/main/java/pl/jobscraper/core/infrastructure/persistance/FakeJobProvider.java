@@ -2,7 +2,7 @@ package pl.jobscraper.core.infrastructure.persistance;
 
 import pl.jobscraper.core.domain.model.Job;
 import org.springframework.stereotype.Component;
-import pl.jobscraper.core.domain.repository.IJobProvider;
+import pl.jobscraper.core.infrastructure.persistance.repository.IJobProvider;
 
 import java.util.ArrayList;
 import java.util.List;

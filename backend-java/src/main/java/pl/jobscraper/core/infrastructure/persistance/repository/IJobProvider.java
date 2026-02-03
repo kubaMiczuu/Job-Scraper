@@ -1,4 +1,4 @@
-package pl.jobscraper.core.domain.repository;
+package pl.jobscraper.core.infrastructure.persistance.repository;
 
 import pl.jobscraper.core.domain.model.Job;
 

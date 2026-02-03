@@ -2,7 +2,7 @@ package pl.jobscraper.core.application.service;
 
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.infrastructure.notifier.INotifier;
-import pl.jobscraper.core.domain.repository.IJobProvider;
+import pl.jobscraper.core.infrastructure.persistance.repository.IJobProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

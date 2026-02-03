@@ -48,23 +48,23 @@ public class DiscordINotifier implements INotifier {
 
         String jobsAsJson = formatJobsAsEmbed(jobs);
 
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(discordWebhookUrl))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(jobsAsJson))
-                    .build();
+        HttpClient client = HttpClient.newHttpClient();
 
-            try {
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                    logger.info("Discord message sent!");
-                } else {
-                    logger.info("Failed to send a Discord message! Status: {}", response.statusCode());
-                }
-            } catch (IOException e) {
-                logger.error("Failed to send HTTP Request", e);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(discordWebhookUrl))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jobsAsJson))
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                logger.info("Discord message sent!");
+            } else {
+                logger.info("Failed to send a Discord message! Status: {}", response.statusCode());
             }
+        } catch (IOException e) {
+            logger.error("Failed to send HTTP Request", e);
         }
     }
 
