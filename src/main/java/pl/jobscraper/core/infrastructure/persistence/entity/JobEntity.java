@@ -191,7 +191,7 @@ public class JobEntity {
      * JPA/Hibernate needs a no-arg constructor to instantiate entities
      * when loading from database. Should not be used directly in code.
      */
-    protected JobEntity() {
+    public JobEntity() {
         // Required by JPA
     }
 
