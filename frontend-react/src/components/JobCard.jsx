@@ -1,16 +1,20 @@
 import React from "react";
 import JobCardField from "./JobCardField.jsx";
 
-const JobCard = ({job}) => {
+const JobCard = ({job, theme}) => {
 
     const hasAdditionalInfo = job.source || job.seniority || job.salary || job.employmentType;
 
+    const themeClasses = theme === 'light'
+        ? 'bg-white border-gray-300 hover:bg-gray-100 text-gray-900'
+        : 'bg-gray-900 border-gray-500 hover:bg-gray-700 text-gray-300 hover:text-gray-100';
+
     return (
         <a href={job.url} target="_blank" rel="noopener noreferrer"
-           className=" block bg-white-200 rounded-lg overflow-hidden shadow-md border border-gray-200 hover:bg-gray-100 hover:scale-105 transition w-full p-4">
-            <h1 className="text-xl font-bold text-gray-800 mb-2">{job.title}</h1>
+           className={`${themeClasses} block rounded-lg overflow-hidden shadow-md border hover:scale-105 transition w-full p-4`}>
+            <h1 className="text-xl font-bold mb-2">{job.title}</h1>
 
-            <div className="flex flex-col gap-1 text-sm text-gray-600">
+            <div className="flex flex-col gap-1 text-sm">
 
                 <JobCardField icon="🏢" label={job.company} tooltip="Company Name"/>
                 <JobCardField icon="📍" label={job.location} tooltip="Job Location"/>
@@ -19,7 +23,7 @@ const JobCard = ({job}) => {
             </div>
 
             {hasAdditionalInfo && (
-            <div className="flex flex-col gap-1 mt-3 pt-3 border-t border-gray-200 text-sm text-gray-600">
+            <div className="flex flex-col gap-1 mt-3 pt-3 border-t">
                 <span className="font-bold">Additional Info:</span>
 
                 {job.seniority && (
