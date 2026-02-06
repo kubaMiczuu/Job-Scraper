@@ -255,16 +255,11 @@ public class JobRepositoryImpl implements JobRepository {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Job> fetchNewOldestFirst(int limit) {
+    public List<JobEntity> fetchNewOldestFirst(int limit) {
         // 1. Create pagination (page 0, size = limit)
         Pageable pageable = PageRequest.of(0, limit);
 
-        // 2. Fetch entities from database
-        List<JobEntity> entities = jpaRepository.findNewJobsOrderedOldestFirst(pageable);
-
-
-        // 3. Convert persistence → domain
-        return entities.stream().map(mapper::toDomain).toList();
+        return jpaRepository.findNewJobsOrderedOldestFirst(pageable);
     }
 
 

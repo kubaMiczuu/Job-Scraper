@@ -148,30 +148,13 @@ public interface JobRepository {
     /**
      * Fetches NEW jobs ordered oldest first (for notification queue).
      * <p>
-     * This is the core query for {@code GET /api/jobs/new} endpoint.
-     * Returns jobs in FIFO order (First In, First Out):
-     * <ul>
-     *   <li>Primary sort: entered_new_at ASC (oldest jobs first)</li>
-     *   <li>Secondary sort: id ASC (deterministic when timestamps equal)</li>
-     * </ul>
-     *
-     * <p><strong>Deterministic ordering importance:</strong>
-     * Secondary sort by id ensures stable order even when multiple jobs
-     * have identical entered_new_at timestamp. Prevents "disappearing items"
-     * effect when Notifier fetches same limit multiple times.
-     *
-     * <p><strong>Return type:</strong>
-     * Returns {@link Job} (domain model), not {@link JobEntity}.
-     * Implementation should use mapper to convert entity → domain.
-     *
-     * <p><strong>Index usage:</strong>
-     * Uses compound index idx_jobs_new_queue (entered_new_at, id)
-     * for efficient filtering and sorting.
+     * Returns JobEntity (not Job) because controller needs metadata (id, enteredNewAt).
+     * Controller will map entity → Job → JobViewDto.
      *
      * @param limit maximum number of jobs to return
-     * @return list of NEW jobs (domain objects), oldest first, up to limit
+     * @return list of JobEntity (oldest NEW first), up to limit
      */
-    List<Job> fetchNewOldestFirst(int limit);
+    List<JobEntity> fetchNewOldestFirst(int limit);
 
     /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
