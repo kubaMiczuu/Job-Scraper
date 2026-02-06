@@ -7,7 +7,6 @@ import pl.jobscraper.core.domain.model.JobState;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
-import java.util.List;
 
 /**
  * Mapper for converting between domain {@link Job} and persistence {@link JobEntity}.

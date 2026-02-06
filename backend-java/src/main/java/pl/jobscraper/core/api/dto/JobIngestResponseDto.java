@@ -55,26 +55,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public record JobIngestResponseDto(
 
-        /**
-         * Total number of jobs received in batch.
-         */
+
         int received,
 
-        /**
-         * Number of jobs inserted as NEW.
-         */
         @JsonProperty("insertedNew")
         int insertedNew,
 
-        /**
-         * Number of jobs updated (without re-promotion to NEW).
-         */
         @JsonProperty("updatedExisting")
         int updatedExisting,
 
-        /**
-         * Number of duplicate jobs within batch (skipped).
-         */
         @JsonProperty("skippedDuplicates")
         int skippedDuplicates
 ) {

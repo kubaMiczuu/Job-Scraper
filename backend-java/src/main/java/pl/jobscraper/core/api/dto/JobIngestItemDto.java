@@ -44,83 +44,40 @@ import java.util.List;
  * @see pl.jobscraper.core.domain.model.Job
  */
 public record JobIngestItemDto(
-        /**
-         * Job title (required).
-         * Example: "Senior Java Developer"
-         */
+
         @NotBlank(message = "Title is required")
         @Size(max = 500, message = "Title must not exceed 500 characters")
         String title,
 
-        /**
-         * Company name (required).
-         * Example: "Google"
-         */
         @NotBlank(message = "Company is required")
         @Size(max = 255, message = "Company must not exceed 255 characters")
         String company,
 
-        /**
-         * Job location (required).
-         * Example: "Warsaw, Poland" or "Remote"
-         */
         @NotBlank(message = "Location is required")
         @Size(max = 255, message = "Location must not exceed 255 characters")
         String location,
 
-        /**
-         * Job posting URL (required).
-         * Example: "https://google.com/careers/123"
-         */
         @NotBlank(message = "URL is required")
         String url,
 
-        /**
-         * Publication date (required).
-         * Example: "2026-02-03T10:00:00Z"
-         */
         @NotNull(message = "Published date is required")
         @JsonProperty("publishedDate")
         Instant publishedDate,
 
-        /**
-         * Job board/source name (optional).
-         * Example: "LinkedIn"
-         */
         @Size(max = 100, message = "Source must not exceed 100 characters")
         String source,
 
-        /**
-         * Seniority level (optional).
-         * Possible values: JUNIOR, MID, SENIOR, LEAD
-         */
         Seniority seniority,
 
-        /**
-         * Employment type (optional).
-         * Possible values: UOP, B2B, INTERNSHIP, OTHER
-         */
         @JsonProperty("employmentType")
         EmploymentType employmentType,
 
-        /**
-         * Technology keywords (optional).
-         * Example: ["java", "spring", "postgresql"]
-         */
         @JsonProperty("techKeywords")
         List<String> techKeywords,
 
-        /**
-         * Salary information (optional).
-         * Example: "15000-20000 PLN"
-         */
         @Size(max = 255, message = "Salary must not exceed 255 characters")
         String salary,
 
-        /**
-         * Job description snippet (optional).
-         * Example: "We are looking for..."
-         */
         @JsonProperty("descriptionSnippet")
         String descriptionSnippet
 ) {

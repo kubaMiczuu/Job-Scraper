@@ -10,7 +10,6 @@ import pl.jobscraper.core.infrastructure.hashing.Sha256HashingService;
 
 /**
  * Spring Configuration for Domain beans.
- *
  * Registers domain services (identity calculation, hashing ) as Spring beans
  * so they can be dependency-injected into application services.
  */

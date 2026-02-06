@@ -10,7 +10,7 @@ import java.time.Instant;
  *
  * <p><strong>Why abstraction over Instant.now()?</strong>
  * <ul>
- *     <li>Testability: Can inject {@link FixedClock} in tests to control time</li>
+ *     <li>Testability: Can inject FixedClock in tests to control time</li>
  *     <li>Determinism: Tests don't depend on system clock (no race conditions)</li>
  *     <li>Time travel: Can simulate passage of time (advance 7 days for TTL tests)</li>
  * </ul>
