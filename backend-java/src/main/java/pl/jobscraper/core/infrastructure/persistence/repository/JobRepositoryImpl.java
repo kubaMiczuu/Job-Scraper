@@ -381,4 +381,10 @@ public class JobRepositoryImpl implements JobRepository {
         jpaRepository.saveAll(entities);
         // SQL: UPDATE jobs SET state='STALE', state_changed_at=?, entered_new_at=NULL WHERE id IN (...)
     }
+
+    @Override
+    @Transactional
+    public List<JobEntity> findStaleJobs(Instant cutoff) {
+        return jpaRepository.findStaleJobs(cutoff);
+    }
 }

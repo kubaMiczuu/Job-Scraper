@@ -239,4 +239,12 @@ public interface JobRepository {
      * @param now current timestamp (for state_changed_at)
      */
     void markStale(List<UUID> ids, Instant now);
+
+    /**
+     * Finds stale jobs (NEW older than cutoff).
+     *
+     * @param cutoff timestamp cutoff
+     * @return list of stale jobs
+     */
+    List<JobEntity> findStaleJobs(Instant cutoff);
 }
