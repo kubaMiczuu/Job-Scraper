@@ -1,10 +1,18 @@
-HELP.md
-target/
-backend-java/.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+### --- IDEs --- ###
 
-### STS ###
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+backend-java/.idea/
+out/
+backend-java/out/
+
+# VS Code
+.vscode/
+
+# STS (Spring Tool Suite)
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +21,38 @@ backend-java/.mvn/wrapper/maven-wrapper.jar
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### --- Build Tools & Frameworks --- ###
+
+# Maven
+target/
+backend-java/target/
+backend-java/.mvn/wrapper/maven-wrapper.jar
+
+# Gradle / General Build
 build/
+
+# Wyjątki dla buildów (zachowanie specyficznych ścieżek)
+!**/src/main/**/target/
+!**/src/test/**/target/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+### --- Environment & Secrets --- ###
+.env
+application.properties
+backend-java/src/main/resources/application.properties
+
+### --- Logs & OS --- ###
+*.log
+.DS_Store
+Thumbs.db
+
+### --- Miscellaneous --- ###
+HELP.md
