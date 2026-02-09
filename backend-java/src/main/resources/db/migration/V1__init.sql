@@ -4,7 +4,7 @@
 -- ============================================================================
 
 -- Enable UUID extension for PostgreSQL
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Table: jobs
 -- Stores job posting with identity (canonical URL or hash), state, and metadata
@@ -26,7 +26,7 @@ CREATE TABLE jobs(
     description_snippet TEXT,
     --Identity fields (XOR constraint: exactly one must be NOT NULL)
     canonical_url TEXT,
-    fallback_hash CHAR(64),
+    fallback_hash VARCHAR(64),
     -- State managment
     state VARCHAR(20) NOT NULL DEFAULT 'NEW'
           CHECK (state IN ('NEW', 'CONSUMED', 'STALE')),

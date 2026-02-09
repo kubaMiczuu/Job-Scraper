@@ -3,15 +3,36 @@ import JobList from "../components/JobList.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import ThemeButton  from "../components/ThemeButton.jsx";
 import FilterSidebar from "../components/FilterSidebar.jsx";
-import mockJobs from "../mocks/jobs.json";
 
 const Dashboard = () => {
 
     const [jobs, setJobs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [theme, setTheme] = useState("light");
+
+    const fetchJobs = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await fetch('http://localhost:8080/api/jobs/all?limit=100');
+
+            if (!response.ok) {
+                throw new Error(`HTTP error, status code: ${response.status}`);
+            }
+
+            const jobs = await response.json();
+            setJobs(jobs);
+        } catch (error) {
+            console.error('Failed to fetch jobs:', error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const [filters, setFilters] = useState({
         seniority: [],
@@ -22,9 +43,7 @@ const Dashboard = () => {
     );
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLoading(false);
-        setJobs(mockJobs);
+        fetchJobs();
     }, [])
 
     const filteredJobs = jobs.filter(job => {
@@ -65,6 +84,10 @@ const Dashboard = () => {
 
     if(loading){
         return <div>Loading...</div>;
+    }
+
+    if(error){
+        return <div>Error: {error}</div>;
     }
 
     if(jobs.length === 0){

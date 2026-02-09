@@ -44,7 +44,7 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
                     <button onClick={onClose} className={`lg:hidden text-2xl hover:text-gray-500 hover:scale-110`}>x</button>
                 </div>
 
-                <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 w-full mb-6 py-2 px-4`}>Clear All</button>
+                <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 w-full mb-6 py-2 px-4 cursor-pointer`}>Clear All</button>
 
                 <FilterCategory title={"Seniority"} options={['JUNIOR', 'MID', 'SENIOR', 'EXPERT']} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} theme={theme}/>
 
