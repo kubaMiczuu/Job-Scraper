@@ -18,7 +18,7 @@ const JobCard = ({job, theme}) => {
 
                 <JobCardField icon="🏢" label={job.company} tooltip="Company Name"/>
                 <JobCardField icon="📍" label={job.location} tooltip="Job Location"/>
-                <JobCardField icon="📅" label={job.publishedDate} tooltip="Published Date"/>
+                <JobCardField icon="📅" label={job.publishedDate.substring(0,10)} tooltip="Published Date"/>
 
             </div>
 

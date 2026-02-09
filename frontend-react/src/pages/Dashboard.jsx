@@ -11,7 +11,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState("dark");
 
     const fetchJobs = async () => {
         try {

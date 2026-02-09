@@ -48,7 +48,7 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
 
                 <FilterCategory title={"Seniority"} options={['JUNIOR', 'MID', 'SENIOR', 'EXPERT']} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} theme={theme}/>
 
-                <FilterCategory title={"Employment Type"} options={['B2B', 'UOP']} selectedValue={filters.employmentType} onToggle={(value) => {handleToggle('employmentType', value)}} theme={theme}/>
+                <FilterCategory title={"Employment Type"} options={['B2B', 'UOP', 'Internship']} selectedValue={filters.employmentType} onToggle={(value) => {handleToggle('employmentType', value)}} theme={theme}/>
 
                 <FilterCategory title={"Location"} options={['Remote', 'Krakow, Poland', 'Warsaw, Poland']} selectedValue={filters.location} onToggle={(value) => {handleToggle('location', value)}} theme={theme}/>
 
