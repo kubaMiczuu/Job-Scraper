@@ -1,4 +1,5 @@
 package pl.jobscraper.core.api.controller;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.jobscraper.core.api.dto.JobViewDto;

@@ -156,6 +156,9 @@ public interface JobRepository {
      */
     List<JobEntity> fetchNewOldestFirst(int limit);
 
+
+    List<JobEntity> fetchAllOldestFirst(int limit);
+
     /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
      * <p>

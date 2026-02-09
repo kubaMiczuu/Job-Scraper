@@ -262,6 +262,12 @@ public class JobRepositoryImpl implements JobRepository {
         return jpaRepository.findNewJobsOrderedOldestFirst(pageable);
     }
 
+    @Override
+    public List<JobEntity> fetchAllOldestFirst(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return jpaRepository.findAllJobsOrderedOldestFirst(pageable);
+    }
+
 
     /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
