@@ -123,7 +123,7 @@ public class JobIngestController {
      * @return 200 OK with aggregated statistics
      */
     @PostMapping
-    public ResponseEntity<String> ingestJobs(@Valid @RequestBody List<JobIngestItemDto> dtos)
+    public ResponseEntity<JobIngestResponseDto> ingestJobs(@Valid @RequestBody List<JobIngestItemDto> dtos)
     {
         // 1. Convert DTO → domain
         List<Job> jobs = dtos.stream()
@@ -137,6 +137,6 @@ public class JobIngestController {
         JobIngestResponseDto responseDto = domainToApiMapper.toDto(result);
 
         // 4. Return HTTP 200 OK with body
-        return ResponseEntity.ok("Ingest endpoint - coming soon!");
+        return ResponseEntity.ok(responseDto);
     }
 }
