@@ -56,3 +56,23 @@ Thumbs.db
 
 ### --- Miscellaneous --- ###
 HELP.md
+# IntelliJ
+backend-java/.idea/
+.idea/*
+*.iml
+
+# Build
+backend-java/out
+backend-java/target
+
+# Logs
+*.log
+
+# Env / secrets
+.env
+backend-java/src/main/resources/application.properties
+application.properties
+
+# OS
+.DS_Store
+Thumbs.db

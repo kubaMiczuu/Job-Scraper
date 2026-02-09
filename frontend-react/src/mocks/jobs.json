@@ -1,0 +1,124 @@
+[
+  {
+    "title": "Senior Java Developer",
+    "company": "Google",
+    "location": "Warsaw, Poland",
+    "url": "https://google.com/careers/java-dev-123",
+    "publishedDate": "2026-02-03T10:00:00Z",
+    "source": "LinkedIn",
+    "seniority": "SENIOR",
+    "employmentType": "UOP",
+    "techKeywords": ["java", "spring", "postgresql"],
+    "salary": "15000-20000 PLN",
+    "descriptionSnippet": "We are looking for experienced Java developer..."
+  },
+  {
+    "title": "Senior Java Developer",
+    "company": "Google - UPDATED",
+    "location": "Warsaw, Poland",
+    "url": "https://google.com/careers/java-123",
+    "publishedDate": "2026-02-03T10:00:00Z",
+    "salary": "20000-25000 PLN"
+  },
+  {
+    "title": "Python Developer",
+    "company": "Netflix",
+    "location": "Krakow, Poland",
+    "url": "https://netflix.com/jobs/python-789",
+    "publishedDate": "2026-02-03T12:00:00Z"
+  },
+  {
+    "title": "DevOps Engineer",
+    "company": "Amazon",
+    "location": "Remote",
+    "url": "https://amazon.com/careers/devops-101",
+    "publishedDate": "2026-02-03T13:00:00Z"
+  },
+  {
+    "title": "React Developer",
+    "company": "Meta",
+    "location": "Remote",
+    "url": "https://meta.com/careers/react-456",
+    "publishedDate": "2026-02-03T11:00:00Z"
+  },
+  {
+    "title": "React Developer",
+    "company": "Meta",
+    "location": "Remote",
+    "url": "https://meta.com/careers/react-456",
+    "publishedDate": "2026-02-03T11:00:00Z"
+  },
+  {
+    "title": "React Developer - DIFFERENT",
+    "company": "Meta",
+    "location": "Remote",
+    "url": "https://meta.com/careers/react-456",
+    "publishedDate": "2026-02-03T11:00:00Z"
+  },
+  {
+    "title": "Senior Java Developer",
+    "company": "Google",
+    "location": "Warsaw, Poland",
+    "url": "https://google.com/careers/java-dev-123",
+    "publishedDate": "2026-02-03T10:00:00Z",
+    "source": "LinkedIn",
+    "seniority": "SENIOR",
+    "employmentType": "UOP",
+    "salary": "15000-20000 PLN"
+  },
+  {
+    "title": "Java Architect",
+    "company": "Allegro",
+    "location": "Poznań / Remote",
+    "url": "https://allegro.pl/jobs/arch-999",
+    "publishedDate": "2026-02-01T09:00:00Z",
+    "source": "JustJoinIT",
+    "seniority": "EXPERT",
+    "employmentType": "B2B",
+    "salary": "35000 - 45000 PLN"
+  },
+  {
+    "title": "Junior Backend Dev",
+    "company": "Comarch",
+    "location": "Kraków",
+    "url": "https://comarch.pl/career/jr-1",
+    "publishedDate": "2026-01-25T08:00:00Z",
+    "source": "NoFluffJobs",
+    "seniority": "JUNIOR",
+    "employmentType": "UOP",
+    "salary": "6000 - 9000 PLN"
+  },
+  {
+    "title": "Software Engineer (Java/Kotlin)",
+    "company": "Spotify",
+    "location": "Remote",
+    "url": "https://spotify.com/jobs/sw-55",
+    "publishedDate": "2026-02-03T15:30:00Z",
+    "source": "Direct",
+    "seniority": "MID",
+    "employmentType": "B2B",
+    "salary": "18000 PLN"
+  },
+  {
+    "title": "Java Specialist",
+    "company": "Bank Pekao",
+    "location": "Warszawa",
+    "url": "https://pekao.com.pl/praca/java-88",
+    "publishedDate": "2026-02-02T11:00:00Z",
+    "source": "Pracuj.pl",
+    "seniority": "MID",
+    "employmentType": "UOP",
+    "salary": null
+  },
+  {
+    "title": "Cloud Engineer",
+    "company": "Microsoft",
+    "location": "Remote",
+    "url": "https://microsoft.com/jobs/cloud-12",
+    "publishedDate": "2026-02-03T16:00:00Z",
+    "source": "LinkedIn",
+    "seniority": "SENIOR",
+    "employmentType": "B2B",
+    "salary": "28000 PLN"
+  }
+]
