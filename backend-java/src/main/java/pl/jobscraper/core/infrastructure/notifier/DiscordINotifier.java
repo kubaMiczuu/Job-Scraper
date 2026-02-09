@@ -1,11 +1,12 @@
 package pl.jobscraper.core.infrastructure.notifier;
 
-import pl.jobscraper.core.domain.model.Job;
+import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,11 +40,11 @@ public class DiscordINotifier implements INotifier {
      * Sends the job listings to Discord.
      * Converts the list of jobs into a JSON payload structure required by Discord Webhooks.
      *
-     * @param jobs A non-null list of {@link Job} objects.
+     * @param jobs A non-null list of {@link JobEntity} objects.
      * @throws InterruptedException If the HTTP communication is interrupted.
      */
     @Override
-    public void send(@NonNull List<Job> jobs) throws InterruptedException {
+    public void send(@NonNull List<JobEntity> jobs) throws InterruptedException {
         logger.info("Sending Discord notifications with {} jobs", jobs.size());
 
         String jobsAsJson = formatJobsAsEmbed(jobs);
@@ -69,13 +70,13 @@ public class DiscordINotifier implements INotifier {
     }
 
     /**
-     * Transforms a list of {@link Job} objects into a Discord Embed JSON string.
+     * Transforms a list of {@link JobEntity} objects into a Discord Embed JSON string.
      * Uses emojis for better visualization and escapes special characters to ensure valid JSON.
      *
      * @param jobs The list of jobs to be formatted.
      * @return A string representing the JSON payload for Discord.
      */
-    public String formatJobsAsEmbed(@NonNull List<Job> jobs) {
+    public String formatJobsAsEmbed(@NonNull List<JobEntity> jobs) {
         StringBuilder json = new StringBuilder();
         json.append("{\"content\":\"New jobs here!!\",");
         json.append("\"embeds\":[{");
@@ -87,7 +88,7 @@ public class DiscordINotifier implements INotifier {
 
         json.append("\"fields\":[");
         for(int i = 0; i < jobs.size(); i++) {
-            Job job = jobs.get(i);
+            JobEntity job = jobs.get(i);
 
             json.append("{");
 
@@ -98,10 +99,10 @@ public class DiscordINotifier implements INotifier {
             json.append("\"value\":\"");
             json.append("\uD83C\uDFE2 ").append(escapeJson(job.getCompany())).append("\\n");
             json.append("\uD83D\uDCCD ").append(escapeJson(job.getLocation())).append("\\n");
-            if(job.getSeniority() != null) json.append("\uD83C\uDFC5 ").append(escapeJson(job.getSeniority())).append("\\n");
-            if(job.getEmploymentType() != null) json.append("\uD83D\uDCBC ").append(escapeJson(job.getEmploymentType())).append("\\n");
+            if(job.getSeniority() != null) json.append("\uD83C\uDFC5 ").append(escapeJson(job.getSeniority().toString())).append("\\n");
+            if(job.getEmploymentType() != null) json.append("\uD83D\uDCBC ").append(escapeJson(job.getEmploymentType().toString())).append("\\n");
             if(job.getSalary() != null) json.append("\uD83D\uDCB5 ").append(escapeJson(job.getSalary())).append("\\n");
-            json.append("\uD83D\uDCC5 ").append(escapeJson(job.getPublishedDate())).append("\\n");
+            json.append("\uD83D\uDCC5 ").append(escapeJson(job.getPublishedDate().toString())).append("\\n");
             if(job.getSource() != null) json.append("\uD83D\uDD0E ").append(escapeJson(job.getSource())).append("\\n");
             json.append("\uD83D\uDD17 ").append("[Visit!](").append(escapeJson(job.getUrl())).append(")");
             json.append("\",");
