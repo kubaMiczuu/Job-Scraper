@@ -1,6 +1,7 @@
-package pl.jobscraper.core.infrastructure.persistance.repository;
+package pl.jobscraper.core.infrastructure.persistence.repository;
 
 import pl.jobscraper.core.domain.model.Job;
+import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface IJobProvider {
      *
      * @return A {@link List} of {@link Job} objects representing new offers.
      */
-    List<Job> getNewJobs();
+    List<JobEntity> getNewJobs();
 
     /**
      * Retrieves all available job postings managed by this provider.
@@ -26,5 +27,5 @@ public interface IJobProvider {
      *
      * @return A {@link List} of all {@link Job} objects currently stored.
      */
-    List<Job> getAllJobs();
+    List<JobEntity> getAllJobs();
 }

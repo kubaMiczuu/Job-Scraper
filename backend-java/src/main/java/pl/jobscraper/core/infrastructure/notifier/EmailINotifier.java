@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,7 +14,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An email-based implementation of the {@link INotifier} interface.
@@ -47,7 +47,7 @@ public class EmailINotifier implements INotifier {
      * @throws InterruptedException If the HTTP request is interrupted.
      */
     @Override
-    public void send(@NonNull List<Job> jobs) throws InterruptedException {
+    public void send(@NonNull List<JobEntity> jobs) throws InterruptedException {
         logger.info("Sending email notifications to: {} with {} jobs", to, jobs.size());
 
         String url = "https://api.resend.com/emails";
@@ -92,7 +92,7 @@ public class EmailINotifier implements INotifier {
      * @param jobs The list of jobs to render.
      * @return A {@link StringBuilder} containing the complete HTML markup.
      */
-    private @NonNull StringBuilder getHTML(@NonNull List<Job> jobs) {
+    private @NonNull StringBuilder getHTML(@NonNull List<JobEntity> jobs) {
         StringBuilder html = new StringBuilder(
                 "<table style=\"border-collapse:collapse; width:100%; font-family:Arial, sans-serif;\">"
                         + "<tr>"
@@ -110,7 +110,7 @@ public class EmailINotifier implements INotifier {
         );
 
         for (int i = 0; i < jobs.size(); i++) {
-            Job job = jobs.get(i);
+            JobEntity job = jobs.get(i);
 
             String rowColor = (i % 2 == 0) ? "#f9f9f9" : "#ffffff";
 

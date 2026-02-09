@@ -1,20 +1,56 @@
-# IntelliJ
-backend-java/.idea/
-.idea/*
+# IntelliJ IDEA
+.idea/
+*.iws
 *.iml
+*.ipr
+backend-java/.idea/
+out/
+backend-java/out/
 
-# Build
-backend-java/out
-backend-java/target
+# VS Code
+.vscode/
 
-# Logs
-*.log
+# STS (Spring Tool Suite)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# Env / secrets
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### --- Build Tools & Frameworks --- ###
+
+# Maven
+target/
+backend-java/target/
+backend-java/.mvn/wrapper/maven-wrapper.jar
+
+# Gradle / General Build
+build/
+
+# Wyjątki dla buildów (zachowanie specyficznych ścieżek)
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### --- Environment & Secrets --- ###
 .env
-backend-java/src/main/resources/application.properties
 application.properties
+backend-java/src/main/resources/application.properties
 
-# OS
+### --- Logs & OS --- ###
+*.log
 .DS_Store
 Thumbs.db
+
+### --- Miscellaneous --- ###
+HELP.md

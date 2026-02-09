@@ -1,8 +1,8 @@
 package pl.jobscraper.core.application.service;
 
-import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.infrastructure.notifier.INotifier;
-import pl.jobscraper.core.infrastructure.persistance.repository.IJobProvider;
+import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
+import pl.jobscraper.core.infrastructure.persistence.repository.IJobProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class NotificationService {
      * @throws InterruptedException If the process is interrupted during execution.
      */
     public void runNotificationCycle() throws IOException, InterruptedException {
-        List<Job> jobs = provider.getNewJobs();
+        List<JobEntity> jobs = provider.getNewJobs();
 
         if(jobs.isEmpty()) {
             logger.info("No new jobs found, skipping notifications");
