@@ -11,9 +11,13 @@ const SearchBar = ({searchTerm, setSearchTerm, theme}) => {
         : 'bg-gray-900 placeholder-gray-300 hover:bg-gray-700 border border-gray-300';
 
     return (
-        <div className="flex flex-row gap-4 w-full max-w-2xl">
-            <input onChange={handleChange} value={searchTerm} placeholder="Search by title or company name..." className={`${themeClasses} focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
-        </div>
+        <>
+            <div className="flex flex-row gap-4 w-full max-w-2xl">
+                <input onChange={handleChange} value={searchTerm} placeholder="Search by title or company name..." className={`${themeClasses} focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
+            </div>
+            <br/>
+        </>
+
     )
 }
 export default SearchBar;
