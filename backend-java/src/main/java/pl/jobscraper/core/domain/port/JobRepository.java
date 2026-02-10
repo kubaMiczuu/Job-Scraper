@@ -156,7 +156,6 @@ public interface JobRepository {
      */
     List<JobEntity> fetchNewOldestFirst(int limit);
 
-
     List<JobEntity> fetchAllOldestFirst(int limit);
 
     /**

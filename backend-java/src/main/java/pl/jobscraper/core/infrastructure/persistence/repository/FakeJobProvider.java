@@ -1,10 +1,10 @@
-package pl.jobscraper.core.infrastructure.persistence;
+package pl.jobscraper.core.infrastructure.persistence.repository;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import pl.jobscraper.core.api.mapper.DomainToEntityMapper;
 import pl.jobscraper.core.domain.model.Job;
 import org.springframework.stereotype.Component;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
-import pl.jobscraper.core.infrastructure.persistence.repository.IJobProvider;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import java.util.List;
  * data source is unavailable.
  */
 @Component
+@ConditionalOnProperty(name = "job.provider.type", havingValue = "fake")
 public class FakeJobProvider implements IJobProvider {
 
     /** List containing newly discovered mock jobs. */
@@ -57,13 +58,4 @@ public class FakeJobProvider implements IJobProvider {
         public List<JobEntity> getNewJobs() {
             return newJobs;
         }
-
-        /**
-         * Returns a list of all mock jobs generated during initialization.
-         * @return A list of all available mock {@link Job} objects.
-         */
-        public List<JobEntity> getAllJobs() {
-            return allJobs;
-        }
-
 }

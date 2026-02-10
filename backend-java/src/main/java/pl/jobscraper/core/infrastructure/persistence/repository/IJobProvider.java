@@ -20,12 +20,4 @@ public interface IJobProvider {
      * @return A {@link List} of {@link Job} objects representing new offers.
      */
     List<JobEntity> getNewJobs();
-
-    /**
-     * Retrieves all available job postings managed by this provider.
-     * This may include both new and previously processed jobs.
-     *
-     * @return A {@link List} of all {@link Job} objects currently stored.
-     */
-    List<JobEntity> getAllJobs();
 }

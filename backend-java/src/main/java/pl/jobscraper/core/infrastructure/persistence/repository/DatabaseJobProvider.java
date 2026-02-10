@@ -1,0 +1,58 @@
+package pl.jobscraper.core.infrastructure.persistence.repository;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+import pl.jobscraper.core.domain.port.JobRepository;
+import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
+
+import java.util.List;
+
+/**
+ * Real implementation of IJobProvider that fetches data from database.
+ * <p>
+ * This provider uses JobRepository to fetch actual job postings from PostgreSQL.
+ * It replaces FakeJobProvider in production use.
+ *
+ * <p><strong>@Primary annotation:</strong>
+ * Tells Spring to prefer this implementation over FakeJobProvider
+ * when injecting IJobProvider into NotificationService.
+ *
+ * <p><strong>Usage:</strong>
+ * NotificationService → IJobProvider → DatabaseJobProvider → JobRepository → Database
+ */
+@Component
+@ConditionalOnProperty(name = "job.provider.type", havingValue = "database")
+public class DatabaseJobProvider implements IJobProvider{
+    private final JobRepository repository;
+
+    /**
+     * Constructor injection of JobRepository.
+     *
+     * @param jobRepository domain repository port for job persistence
+     */
+    public DatabaseJobProvider(JobRepository jobRepository) {
+        this.repository = jobRepository;
+    }
+
+    /**
+     * Fetches NEW jobs from database (ready for notification).
+     * <p>
+     * Returns jobs in state NEW, ordered oldest first (FIFO queue).
+     * This is the same data that GET /api/jobs/new endpoint returns.
+     *
+     * <p><strong>SQL executed:</strong>
+     * <pre>
+     * SELECT * FROM jobs
+     * WHERE state = 'NEW'
+     * ORDER BY entered_new_at ASC, id ASC
+     * LIMIT 100
+     * </pre>
+     *
+     * @return list of NEW jobs (up to 100), oldest first
+     */
+    @Override
+    public List<JobEntity> getNewJobs() {
+        return repository.fetchNewOldestFirst(100);
+    }
+}
