@@ -50,5 +50,5 @@ public enum Seniority {
      * Typically: tech lead, team lead, principal engineer, staff engineer,
      * engineering manager (with hands-on coding).
      */
-    LEAD
+    LEAD, EXPERT
 }

@@ -147,6 +147,6 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     @Query("SELECT j FROM JobEntity j " + "WHERE j.state = 'NEW' AND j.enteredNewAt < :cutoff")
     List<JobEntity> findStaleJobs(@Param("cutoff") Instant cutoff);
 
-    @Query("SELECT j FROM JobEntity j ORDER BY j.enteredNewAt ASC, j.id ASC")
+    @Query("SELECT j FROM JobEntity j ORDER BY j.publishedDate ASC, j.id ASC")
     List<JobEntity> findAllJobsOrderedOldestFirst(Pageable pageable);
 }

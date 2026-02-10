@@ -44,13 +44,13 @@ public class ScheduleService {
         }
     }
 
-    /**
-     * A secondary entry point used for testing purposes.
-     * Triggered based on the {@code notification.test.cron} property,
-     * allowing for more frequent or manual-like test runs.
-     */
-    @Scheduled(cron = "${notification.test.cron}")
-    public void testNotifications() {
-        sendNotifications();
-    }
+//    /**
+//     * A secondary entry point used for testing purposes.
+//     * Triggered based on the {@code notification.test.cron} property,
+//     * allowing for more frequent or manual-like test runs.
+//     */
+//    @Scheduled(cron = "${notification.test.cron}")
+//    public void testNotifications() {
+//        sendNotifications();
+//    }
 }
