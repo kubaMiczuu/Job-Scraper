@@ -27,16 +27,14 @@ import java.util.UUID;
 @ConditionalOnProperty(name = "job.provider.type", havingValue = "database")
 public class DatabaseJobProvider implements IJobProvider{
     private final JobRepository repository;
-    private final JobFilter filter;
 
     /**
      * Constructor injection of JobRepository.
      *
      * @param jobRepository domain repository port for job persistence
      */
-    public DatabaseJobProvider(JobRepository jobRepository, JobFilter filter) {
+    public DatabaseJobProvider(JobRepository jobRepository) {
         this.repository = jobRepository;
-        this.filter = filter;
     }
 
     /**
@@ -56,7 +54,7 @@ public class DatabaseJobProvider implements IJobProvider{
      * @return list of NEW jobs (up to 100), oldest first
      */
     @Override
-    public List<JobEntity> getNewJobs() {
+    public List<JobEntity> getNewJobs(JobFilter filter) {
         return repository.fetchNewWithFilters(filter, 100, 0);
 
     }

@@ -2,6 +2,7 @@ package pl.jobscraper.core.infrastructure.persistence.repository;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import pl.jobscraper.core.api.mapper.DomainToEntityMapper;
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.model.Job;
 import org.springframework.stereotype.Component;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -59,7 +60,7 @@ public class FakeJobProvider implements IJobProvider {
      *
      * @return A list of newly created {@link Job} objects.
      */
-    public List<JobEntity> getNewJobs() {
+    public List<JobEntity> getNewJobs(JobFilter filter) {
             return newJobs;
     }
 

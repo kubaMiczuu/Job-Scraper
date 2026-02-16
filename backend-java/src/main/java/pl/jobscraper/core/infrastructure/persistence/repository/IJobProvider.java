@@ -1,5 +1,6 @@
 package pl.jobscraper.core.infrastructure.persistence.repository;
 
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
@@ -19,7 +20,7 @@ public interface IJobProvider {
      *
      * @return A {@link List} of {@link Job} objects representing new offers.
      */
-    List<JobEntity> getNewJobs();
+    List<JobEntity> getNewJobs(JobFilter filter);
 
     /**
      * Marks the specified list of job entities as processed or notified.
