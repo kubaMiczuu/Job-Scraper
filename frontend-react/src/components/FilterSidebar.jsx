@@ -1,7 +1,27 @@
-import React from 'react';
+import React, {use, useEffect, useState} from 'react';
 import FilterCategory from './FilterCategory.jsx';
 
-const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
+const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme}) => {
+
+    const [seniorityOptions, setSeniorityOptions] = useState([]);
+    const [employmentTypeOptions, setEmploymentTypeOptions] = useState([]);
+    const [locationOptions, setLocationOptions] = useState([]);
+    const [sourceOptions, setSourceOptions] = useState([]);
+
+    useEffect(() => {
+        const uniqueSeniorities = [...new Set(jobs.map(job => job.seniority))].filter(Boolean);
+        setSeniorityOptions(uniqueSeniorities);
+
+        const uniqueEmploymentTypes = [...new Set(jobs.map(job => job.employmentType))].filter(Boolean);
+        setEmploymentTypeOptions(uniqueEmploymentTypes);
+
+        const uniqueLocations = [...new Set(jobs.map(job => job.location))].filter(Boolean);
+        setLocationOptions(uniqueLocations);
+
+        const uniqueSources = [...new Set(jobs.map(job => job.source))].filter(Boolean);
+        setSourceOptions(uniqueSources);
+
+    }, [jobs])
 
     const themeClasses = theme === 'light'
         ? 'bg-white text-gray-900 border-gray-300'
@@ -21,6 +41,8 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
         onFilterChange('location', [])
         onFilterChange('source', [])
     }
+
+
 
     return (
         <>
@@ -46,13 +68,13 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
 
                 <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 w-full mb-6 py-2 px-4 cursor-pointer`}>Clear All</button>
 
-                <FilterCategory title={"Seniority"} options={['JUNIOR', 'MID', 'SENIOR', 'EXPERT']} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} theme={theme}/>
+                <FilterCategory title={"Seniority"} options={seniorityOptions} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} theme={theme}/>
 
-                <FilterCategory title={"Employment Type"} options={['B2B', 'UOP', 'Internship']} selectedValue={filters.employmentType} onToggle={(value) => {handleToggle('employmentType', value)}} theme={theme}/>
+                <FilterCategory title={"Employment Type"} options={employmentTypeOptions} selectedValue={filters.employmentType} onToggle={(value) => {handleToggle('employmentType', value)}} theme={theme}/>
 
-                <FilterCategory title={"Location"} options={['Remote', 'Krakow, Poland', 'Warsaw, Poland']} selectedValue={filters.location} onToggle={(value) => {handleToggle('location', value)}} theme={theme}/>
+                <FilterCategory title={"Location"} options={locationOptions} selectedValue={filters.location} onToggle={(value) => {handleToggle('location', value)}} theme={theme}/>
 
-                <FilterCategory title={"Source"} options={['pracuj.pl', 'LinkedIn', 'JustJoinIT']} selectedValue={filters.source} onToggle={(value) => {handleToggle('source', value)}} theme={theme}/>
+                <FilterCategory title={"Source"} options={sourceOptions} selectedValue={filters.source} onToggle={(value) => {handleToggle('source', value)}} theme={theme}/>
 
             </div>
         </>

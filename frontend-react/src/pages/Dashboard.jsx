@@ -85,7 +85,7 @@ const Dashboard = () => {
     return (
         <div className={`${themeClasses} min-h-screen flex`}>
 
-            <FilterSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={filters} onFilterChange={handleFilterChange} theme={theme} />
+            <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={filters} onFilterChange={handleFilterChange} theme={theme} />
 
             <div className={`${themeClasses} flex-1 p-8 transition-all`}>
 
