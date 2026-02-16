@@ -20,5 +20,5 @@ public interface INotifier {
      * @throws IOException          If a network or I/O error occurs during the sending process.
      * @throws InterruptedException If the operation is interrupted before completion.
      */
-    void send(List<JobEntity> jobs) throws IOException, InterruptedException;
+    boolean send(List<JobEntity> jobs) throws IOException, InterruptedException;
 }

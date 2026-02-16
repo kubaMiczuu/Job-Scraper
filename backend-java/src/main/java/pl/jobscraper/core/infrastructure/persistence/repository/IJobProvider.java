@@ -20,4 +20,14 @@ public interface IJobProvider {
      * @return A {@link List} of {@link Job} objects representing new offers.
      */
     List<JobEntity> getNewJobs();
+
+    /**
+     * Marks the specified list of job entities as processed or notified.
+     * This method ensures that the provider records which jobs have already
+     * been handled, preventing duplicate notifications.
+     *
+     * @param jobs A {@link List} of {@link JobEntity} objects that have been
+     * successfully consumed or delivered to the user.
+     */
+    void makeConsumedNotifications(List<JobEntity> jobs);
 }

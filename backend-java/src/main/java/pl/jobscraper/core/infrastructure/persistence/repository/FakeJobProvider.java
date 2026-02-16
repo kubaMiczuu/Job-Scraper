@@ -37,6 +37,9 @@ public class FakeJobProvider implements IJobProvider {
         initializeMockData();
     }
 
+    /**
+     * Creates a mock data for test use
+     */
     private void initializeMockData() {
         // Basic jobs
         for (int i = 0; i < 2; i++) {
@@ -50,12 +53,23 @@ public class FakeJobProvider implements IJobProvider {
             newJobs.add(mapper.toEntity(job));
         }
     }
-        /**
-         * Returns a list of mock jobs generated during initialization.
-         *
-         * @return A list of newly created {@link Job} objects.
-         */
-        public List<JobEntity> getNewJobs() {
+
+    /**
+     * Returns a list of mock jobs generated during initialization.
+     *
+     * @return A list of newly created {@link Job} objects.
+     */
+    public List<JobEntity> getNewJobs() {
             return newJobs;
-        }
+    }
+
+    /**
+     * returns nothing :D
+     */
+    @Override
+    public void makeConsumedNotifications(List<JobEntity> jobs) {
+
+    }
+
+
 }

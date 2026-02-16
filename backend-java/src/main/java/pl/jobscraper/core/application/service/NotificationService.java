@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Service responsible for coordinating the job notification process.
@@ -41,6 +42,7 @@ public class NotificationService {
      * Executes a single notification cycle.
      * Fetches new jobs and, if any are found, iterates through all registered
      * notifiers to deliver the updates.
+     * If any notifier sent notifications, the jobs from lists are marked as CONSUMED.
      *
      * @throws IOException          If an I/O error occurs during data retrieval or sending.
      * @throws InterruptedException If the process is interrupted during execution.
@@ -55,8 +57,14 @@ public class NotificationService {
 
         logger.info("Found {} new jobs", jobs.size());
 
+        boolean consumed = false;
+
         for(INotifier notifier : notifiers) {
-            notifier.send(jobs);
+            boolean sent = notifier.send(jobs);
+
+            if(sent) consumed = true;
         }
+
+        if(consumed) provider.makeConsumedNotifications(jobs);
     }
 }
