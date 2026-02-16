@@ -102,14 +102,18 @@ public class NewJobsController {
             @RequestParam(name = "keywords", required = false) String keywords
     ) {
 
-        List<String> keywordsList = null;
-        if (keywords != null &&  !keywords.isBlank()) {
-            keywordsList = List.of(keywords.split(","));
+        List<JobEntity> entities;
+
+        if(location == null && seniority == null && keywords == null){
+            entities = newJobsService.fetchNew(limit);
+        }else{
+            List<String> keywordsList = null;
+            if (keywords != null &&  !keywords.isBlank()) {
+                keywordsList = List.of(keywords.split(","));
+            }
+            JobFilter filter = new JobFilter(location, seniority, keywordsList);
+            entities = newJobsService.fetchNewWithFilters(filter, limit, offset);
         }
-
-        JobFilter filter = new JobFilter(location, seniority, keywordsList);
-
-        List<JobEntity> entities = newJobsService.fetchNewWithFilters(filter, limit, offset);
 
         List<JobViewDto> dtos = entities.stream().map(mapper::toViewDto).toList();
         return ResponseEntity.ok(dtos);

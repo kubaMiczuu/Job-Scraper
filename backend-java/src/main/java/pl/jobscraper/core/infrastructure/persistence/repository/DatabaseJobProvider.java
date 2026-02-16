@@ -2,6 +2,7 @@ package pl.jobscraper.core.infrastructure.persistence.repository;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.port.JobRepository;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
@@ -26,14 +27,16 @@ import java.util.UUID;
 @ConditionalOnProperty(name = "job.provider.type", havingValue = "database")
 public class DatabaseJobProvider implements IJobProvider{
     private final JobRepository repository;
+    private final JobFilter filter;
 
     /**
      * Constructor injection of JobRepository.
      *
      * @param jobRepository domain repository port for job persistence
      */
-    public DatabaseJobProvider(JobRepository jobRepository) {
+    public DatabaseJobProvider(JobRepository jobRepository, JobFilter filter) {
         this.repository = jobRepository;
+        this.filter = filter;
     }
 
     /**
@@ -54,7 +57,7 @@ public class DatabaseJobProvider implements IJobProvider{
      */
     @Override
     public List<JobEntity> getNewJobs() {
-        return repository.fetchNewOldestFirst(100);
+        return repository.fetchNewWithFilters(filter, 100, 0);
 
     }
 

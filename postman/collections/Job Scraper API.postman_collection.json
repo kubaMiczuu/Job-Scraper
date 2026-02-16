@@ -1,0 +1,45 @@
+{
+  "info": {
+    "_postman_id": "fbca3bf3-2f13-45a9-8161-15bec215d0b8",
+    "name": "Job Scraper API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET /api/jobs/new (default)",
+      "id": "8876d707-1802-444d-9b80-9c860c19f9ea",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "GET /api/jobs/new (with limit)",
+      "id": "c6f150f8-7737-4945-9da3-3bcbed561fb1",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "POST /api/jobs (ingest)",
+      "id": "d123f0bf-07a7-419e-abe9-632917ddd4d3",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "POST /mark-consumed",
+      "id": "b29829f1-8477-4a24-bf09-ae4b1d6cb8c3",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
