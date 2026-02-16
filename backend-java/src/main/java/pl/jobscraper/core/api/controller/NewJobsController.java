@@ -97,9 +97,9 @@ public class NewJobsController {
     public ResponseEntity<List<JobViewDto>> getNewJobs(
             @RequestParam(defaultValue = "100") int limit,
             @RequestParam(defaultValue = "0") int offset,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) Seniority seniority,
-            @RequestParam(required = false) String keywords
+            @RequestParam(name = "location",  required = false) String location,
+            @RequestParam(name = "seniority", required = false) Seniority seniority,
+            @RequestParam(name = "keywords", required = false) String keywords
     ) {
 
         List<String> keywordsList = null;
