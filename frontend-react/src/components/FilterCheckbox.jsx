@@ -7,7 +7,7 @@ const FilterCheckbox = ({label, onChange, checked, theme}) => {
         : 'bg-gray-900 text-gray-300';
 
     return (
-        <label className={`${themeClasses} flex items-center gap-2 cursor-pointer hover:bg-opacity-50 p-1 rounded hover:scale-105 p-2`}>
+        <label className={`${themeClasses} flex items-center gap-2 cursor-pointer hover:bg-opacity-50 p-2 rounded hover:scale-105 hover:border origin-top`}>
 
             <input type="checkbox" checked = {checked} onChange={onChange} className={"accent-blue-500 w-4 h-4 cursor-pointer"}/>
 

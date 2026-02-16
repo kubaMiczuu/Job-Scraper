@@ -1,7 +1,31 @@
-import React from 'react';
+import React, {use, useEffect, useState} from 'react';
 import FilterCategory from './FilterCategory.jsx';
 
-const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
+const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme}) => {
+
+    const [seniorityOptions, setSeniorityOptions] = useState([]);
+    const [employmentTypeOptions, setEmploymentTypeOptions] = useState([]);
+    const [locationOptions, setLocationOptions] = useState([]);
+    const [sourceOptions, setSourceOptions] = useState([]);
+    const [seniorityExpand, setSeniorityExpand] = useState(false);
+    const [employmentTypeExpand, setEmploymentTypeExpand] = useState(false);
+    const [locationExpand, setLocationExpand] = useState(false);
+    const [sourceExpand, setSourceExpand] = useState(false);
+
+    useEffect(() => {
+        const uniqueSeniorities = [...new Set(jobs.map(job => job.seniority))].filter(Boolean);
+        setSeniorityOptions(uniqueSeniorities);
+
+        const uniqueEmploymentTypes = [...new Set(jobs.map(job => job.employmentType))].filter(Boolean);
+        setEmploymentTypeOptions(uniqueEmploymentTypes);
+
+        const uniqueLocations = [...new Set(jobs.map(job => job.location))].filter(Boolean);
+        setLocationOptions(uniqueLocations);
+
+        const uniqueSources = [...new Set(jobs.map(job => job.source))].filter(Boolean);
+        setSourceOptions(uniqueSources);
+
+    }, [jobs])
 
     const themeClasses = theme === 'light'
         ? 'bg-white text-gray-900 border-gray-300'
@@ -22,6 +46,10 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
         onFilterChange('source', [])
     }
 
+    const handleExpand = (setExpand) => {
+        setExpand(prev => !prev);
+    }
+
     return (
         <>
             {isOpen && (
@@ -31,7 +59,7 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
             <div className={`
                 ${themeClasses}
                 ${isOpen ? `translate-x-0` : '-translate-x-full'}
-                fixed top-0 left-0 h-full w-80 p-4
+                fixed top-0 left-0 h-full w-80 p-5
                 border-r shadow-xl z-50
                 ease-in-out transform transition-transform duration-300
                 lg:translate-x-0 lg:static  lg:z-0
@@ -46,13 +74,13 @@ const FilterSidebar = ({isOpen, onClose, filters, onFilterChange, theme}) => {
 
                 <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 w-full mb-6 py-2 px-4 cursor-pointer`}>Clear All</button>
 
-                <FilterCategory title={"Seniority"} options={['JUNIOR', 'MID', 'SENIOR', 'EXPERT']} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} theme={theme}/>
+                <FilterCategory title={"Seniority"} options={seniorityOptions} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} expand={seniorityExpand} onExpand={() => {handleExpand(setSeniorityExpand)}} theme={theme}/>
 
-                <FilterCategory title={"Employment Type"} options={['B2B', 'UOP', 'Internship']} selectedValue={filters.employmentType} onToggle={(value) => {handleToggle('employmentType', value)}} theme={theme}/>
+                <FilterCategory title={"Employment Type"} options={employmentTypeOptions} selectedValue={filters.employmentType} onToggle={(value) => {handleToggle('employmentType', value)}} expand={employmentTypeExpand} onExpand={() => {handleExpand(setEmploymentTypeExpand)}} theme={theme}/>
 
-                <FilterCategory title={"Location"} options={['Remote', 'Krakow, Poland', 'Warsaw, Poland']} selectedValue={filters.location} onToggle={(value) => {handleToggle('location', value)}} theme={theme}/>
+                <FilterCategory title={"Location"} options={locationOptions} selectedValue={filters.location} onToggle={(value) => {handleToggle('location', value)}} expand={locationExpand} onExpand={() => {handleExpand(setLocationExpand)}} theme={theme}/>
 
-                <FilterCategory title={"Source"} options={['pracuj.pl', 'LinkedIn', 'JustJoinIT']} selectedValue={filters.source} onToggle={(value) => {handleToggle('source', value)}} theme={theme}/>
+                <FilterCategory title={"Source"} options={sourceOptions} selectedValue={filters.source} onToggle={(value) => {handleToggle('source', value)}} expand={sourceExpand} onExpand={() => {handleExpand(setSourceExpand)}} theme={theme}/>
 
             </div>
         </>
