@@ -28,3 +28,10 @@
 .animation-delay-400 {
     animation-delay: 0.4s;
 }
+
+/* Disable selection */
+html, body {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
