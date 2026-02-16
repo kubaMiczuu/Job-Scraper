@@ -13,7 +13,7 @@ const SearchBar = ({searchTerm, setSearchTerm, theme}) => {
     return (
         <>
             <div className="flex flex-row gap-4 w-full max-w-2xl">
-                <input onChange={handleChange} value={searchTerm} placeholder="Search by title or company name..." className={`${themeClasses} focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
+                <input onChange={handleChange} value={searchTerm} placeholder="Search by title, company name or keywords..." className={`${themeClasses} focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
             </div>
             <br/>
         </>

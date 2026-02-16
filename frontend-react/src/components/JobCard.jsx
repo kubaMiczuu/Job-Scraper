@@ -42,6 +42,10 @@ const JobCard = ({job, theme}) => {
                     <JobCardField icon="🔎" label={job.source} tooltip="Source Website"/>
                 )}
 
+                {job.techKeywords && (
+                    <JobCardField icon="🛠️" label={job.techKeywords.join(", ")} tooltip="Keywords"/>
+                )}
+
             </div>
             )}
 

@@ -48,7 +48,8 @@ const Dashboard = () => {
     const filteredJobs = jobs.filter(job => {
         const matchesSearch =
             job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.company.toLowerCase().includes(searchTerm.toLowerCase());
+            job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.techKeywords.some(keyword => keyword.toLowerCase().includes(searchTerm.toLowerCase()));
 
         const matchesSeniority =
             filters.seniority.length === 0 ||
