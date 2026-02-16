@@ -4,6 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.identity.JobIdentity;
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.domain.model.JobState;
@@ -262,6 +263,42 @@ public class JobRepositoryImpl implements JobRepository {
         return jpaRepository.findNewJobsOrderedOldestFirst(pageable);
     }
 
+    /**
+     * Implementation of the filtered search. Maps domain types to JDBC-compatible
+     * types for the native SQL query execution.
+     *
+     * @param filter the criteria to apply
+     * @param limit  maximum results
+     * @param offset pagination offset
+     * @return filtered list of job entities
+     */
+    @Override
+    @Transactional
+    public List<JobEntity> fetchNewWithFilters(JobFilter filter, int limit, int offset) {
+        String location = filter.hasLocation() ? filter.getLocation() : null;
+        String seniority = filter.hasSeniority() ? filter.getSeniority().name() : null;
+
+        String[] keywords = null;
+        if (filter.hasKeywords()) {
+            keywords = filter.getKeywords().stream()
+                    .map(String::toLowerCase)
+                    .toArray(String[]::new);
+        }
+        return jpaRepository.findNewJobsWithFilters(
+                location,
+                seniority,
+                keywords,
+                limit,
+                offset
+        );
+    }
+
+    /**
+     * Fetches all jobs ordered by their publication date (oldest first).
+     *
+     * @param limit maximum number of records to fetch
+     * @return list of job entities
+     */
     @Override
     public List<JobEntity> fetchAllOldestFirst(int limit) {
         Pageable pageable = PageRequest.of(0, limit);

@@ -147,6 +147,65 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     @Query("SELECT j FROM JobEntity j " + "WHERE j.state = 'NEW' AND j.enteredNewAt < :cutoff")
     List<JobEntity> findStaleJobs(@Param("cutoff") Instant cutoff);
 
+    /**
+     * Retrieves all jobs from the database ordered by their publication date in ascending order.
+     * <p>
+     * This query provides a chronological view of all processed jobs, starting from the oldest.
+     * The secondary sort by {@code id} ensures a deterministic order for jobs published
+     * at the exact same time.
+     *
+     * <p><strong>Usage example:</strong>
+     * <pre>{@code
+     * // Fetch the first 50 oldest jobs
+     * Pageable pageable = PageRequest.of(0, 50);
+     * List<JobEntity> jobs = repo.findAllJobsOrderedOldestFirst(pageable);
+     * }</pre>
+     *
+     * @param pageable pagination and sorting information (e.g., page number and size)
+     * @return a list of all job entities, ordered from oldest to newest
+     */
     @Query("SELECT j FROM JobEntity j ORDER BY j.publishedDate ASC, j.id ASC")
     List<JobEntity> findAllJobsOrderedOldestFirst(Pageable pageable);
+
+    /**
+     * Finds NEW jobs with dynamic filters using a native PostgreSQL query.
+     * <p>
+     * This method handles:
+     * <ul>
+     * <li>Case-insensitive partial match for location (ILIKE)</li>
+     * <li>Exact match for seniority level</li>
+     * <li>Keyword matching within the PostgreSQL text array (tech_keywords)</li>
+     * </ul>
+     *
+     * @param location  optional location filter (partial string, null to skip)
+     * @param seniority optional seniority level (exact string match, null to skip)
+     * @param keywords  optional array of keywords (matches if any database tag exists in this array)
+     * @param limit     maximum number of records to return
+     * @param offset    number of records to skip (pagination)
+     * @return list of {@link JobEntity} matching all provided criteria
+     */
+    @Query(value = """
+        SELECT * FROM jobs j
+        WHERE j.state = 'NEW'
+            AND (CAST(:location AS VARCHAR) IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', CAST(:location AS VARCHAR), '%')))
+            AND (CAST(:seniority AS VARCHAR) IS NULL OR j.seniority = CAST(:seniority AS VARCHAR))
+            AND (
+                COALESCE(ARRAY_LENGTH(CAST(:keywords AS TEXT[]), 1), 0) = 0
+                OR EXISTS (
+                         SELECT 1 FROM UNNEST(j.tech_keywords) AS keyword
+                         WHERE LOWER(keyword) = ANY(
+                             SELECT LOWER(kw) FROM UNNEST(CAST(:keywords AS TEXT[])) AS kw
+                         )
+                     )
+            )
+            ORDER BY j.entered_new_at ASC, j.id ASC
+            LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<JobEntity> findNewJobsWithFilters(
+            @Param("location") String location,
+            @Param("seniority") String seniority,
+            @Param("keywords") String[] keywords,
+            @Param("limit") int limit,
+            @Param("offset") int offset
+    );
 }

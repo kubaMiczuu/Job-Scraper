@@ -2,6 +2,7 @@ package pl.jobscraper.core.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.domain.port.JobRepository;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -98,5 +99,25 @@ public class NewJobsService {
      */
     public List<JobEntity> fetchNew(int limit) {
         return repository.fetchNewOldestFirst(limit);
+    }
+
+    /**
+     * Fetches NEW jobs with optional filters (filtered queue).
+     * <p>
+     * Returns jobs matching filter criteria in FIFO order.
+     *
+     * <p><strong>Example:</strong>
+     * <pre>{@code
+     * // Only remote SENIOR Java jobs:
+     * JobFilter filter = new JobFilter("remote", Seniority.SENIOR, List.of("java"));
+     * List<JobEntity> jobs = service.fetchNewWithFilters(filter, 100);
+     * }</pre>
+     *
+     * @param filter filter criteria (use JobFilter.none() for no filtering)
+     * @param limit maximum number of jobs to return
+     * @return list of JobEntity matching filters (oldest NEW first), up to limit
+     */
+    public List<JobEntity> fetchNewWithFilters(JobFilter filter, int limit, int offset) {
+        return repository.fetchNewWithFilters(filter, limit, offset);
     }
 }

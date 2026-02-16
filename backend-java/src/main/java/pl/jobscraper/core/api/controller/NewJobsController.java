@@ -4,7 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.jobscraper.core.api.dto.JobViewDto;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.application.service.NewJobsService;
+import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.util.List;
@@ -80,25 +82,34 @@ public class NewJobsController {
 
 
     /**
-     * Fetches NEW jobs queue (FIFO order).
+     * Retrieves a list of new job offers with optional filtering and pagination.
      * <p>
-     * <strong>Flow:</strong>
-     * <ol>
-     *   <li>Service fetches entities from database (ORDER BY entered_new_at ASC)</li>
-     *   <li>Mapper converts: List&lt;JobEntity&gt; → List&lt;JobViewDto&gt;</li>
-     *   <li>Return 200 OK with JSON array</li>
-     </ol>
+     * Example usage: GET /api/jobs/new?location=London&keywords=java,aws&limit=20&offset=0
      *
-     * <p><strong>Ordering guarantee:</strong>
-     * Jobs are always returned in same order (deterministic).
-     * Oldest NEW jobs come first (FIFO queue).
-     *
-     * @param limit maximum number of jobs to return (default 100)
-     * @return 200 OK with list of JobViewDto
+     * @param limit     max number of results (default 100)
+     * @param offset    starting record index (default 0)
+     * @param location  (optional) city or country
+     * @param seniority (optional) seniority level (e.g., JUNIOR, MID, SENIOR)
+     * @param keywords  (optional) comma-separated list of technologies
+     * @return a list of DTOs representing the job views
      */
     @GetMapping("/new")
-    public ResponseEntity<List<JobViewDto>> getNewJobs(@RequestParam(defaultValue = "100") int limit) {
-        List<JobEntity> entities = newJobsService.fetchNew(limit);
+    public ResponseEntity<List<JobViewDto>> getNewJobs(
+            @RequestParam(defaultValue = "100") int limit,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Seniority seniority,
+            @RequestParam(required = false) String keywords
+    ) {
+
+        List<String> keywordsList = null;
+        if (keywords != null &&  !keywords.isBlank()) {
+            keywordsList = List.of(keywords.split(","));
+        }
+
+        JobFilter filter = new JobFilter(location, seniority, keywordsList);
+
+        List<JobEntity> entities = newJobsService.fetchNewWithFilters(filter, limit, offset);
 
         List<JobViewDto> dtos = entities.stream().map(mapper::toViewDto).toList();
         return ResponseEntity.ok(dtos);

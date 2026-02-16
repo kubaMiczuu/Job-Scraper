@@ -1,5 +1,6 @@
 package pl.jobscraper.core.domain.port;
 
+import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.identity.JobIdentity;
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -156,6 +157,26 @@ public interface JobRepository {
      */
     List<JobEntity> fetchNewOldestFirst(int limit);
 
+    /**
+     * Fetches NEW jobs with optional filters (for filtered queue).
+     * <p>
+     * Returns NEW jobs matching filter criteria, ordered oldest first.
+     *
+     * @param filter filter criteria (use JobFilter.none() for no filtering)
+     * @param limit maximum number of jobs to return
+     * @return list of JobEntity matching filters (oldest NEW first), up to limit
+     */
+    List<JobEntity> fetchNewWithFilters(JobFilter filter, int limit, int offset);
+
+    /**
+     * Fetches all jobs ordered oldest first.
+     * <p>
+     * Returns JobEntity (not Job) because controller needs metadata (id, enteredNewAt).
+     * Controller will map entity → Job → JobViewDto.
+     *
+     * @param limit maximum number of jobs to return
+     * @return list of JobEntity (oldest first), up to limit
+     */
     List<JobEntity> fetchAllOldestFirst(int limit);
 
     /**
