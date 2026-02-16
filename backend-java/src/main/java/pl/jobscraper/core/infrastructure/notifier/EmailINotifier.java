@@ -47,7 +47,7 @@ public class EmailINotifier implements INotifier {
      * @throws InterruptedException If the HTTP request is interrupted.
      */
     @Override
-    public void send(@NonNull List<JobEntity> jobs) throws InterruptedException {
+    public boolean send(@NonNull List<JobEntity> jobs) throws InterruptedException {
         logger.info("Sending email notifications to: {} with {} jobs", to, jobs.size());
 
         String url = "https://api.resend.com/emails";
@@ -77,11 +77,14 @@ public class EmailINotifier implements INotifier {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 200 && response.statusCode() < 300) {
                 logger.info("Email sent! to: {}", to);
+                return true;
             } else {
                 logger.info("Failed to send an Email! to: {}. Status: {}", to, response.statusCode());
+                return false;
             }
         } catch (IOException e) {
             logger.error("Failed to send HTTP Request", e);
+            return false;
         }
     }
 

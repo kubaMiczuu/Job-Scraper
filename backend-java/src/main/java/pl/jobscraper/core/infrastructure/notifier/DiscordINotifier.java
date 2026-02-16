@@ -44,7 +44,7 @@ public class DiscordINotifier implements INotifier {
      * @throws InterruptedException If the HTTP communication is interrupted.
      */
     @Override
-    public void send(@NonNull List<JobEntity> jobs) throws InterruptedException {
+    public boolean send(@NonNull List<JobEntity> jobs) throws InterruptedException {
         logger.info("Sending Discord notifications with {} jobs", jobs.size());
 
         String jobsAsJson = formatJobsAsEmbed(jobs);
@@ -61,11 +61,14 @@ public class DiscordINotifier implements INotifier {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 200 && response.statusCode() < 300) {
                 logger.info("Discord message sent!");
+                return true;
             } else {
                 logger.info("Failed to send a Discord message! Status: {}", response.statusCode());
+                return false;
             }
         } catch (IOException e) {
             logger.error("Failed to send HTTP Request", e);
+            return false;
         }
     }
 

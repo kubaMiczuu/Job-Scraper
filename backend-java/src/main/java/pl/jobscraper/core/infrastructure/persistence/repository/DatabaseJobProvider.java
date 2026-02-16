@@ -1,12 +1,13 @@
 package pl.jobscraper.core.infrastructure.persistence.repository;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import pl.jobscraper.core.domain.port.JobRepository;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Real implementation of IJobProvider that fetches data from database.
@@ -54,5 +55,22 @@ public class DatabaseJobProvider implements IJobProvider{
     @Override
     public List<JobEntity> getNewJobs() {
         return repository.fetchNewOldestFirst(100);
+
+    }
+
+    /**
+     * Marks a collection of jobs as consumed in the persistent storage.
+     * <p>
+     * This implementation extracts {@link UUID}s from the provided {@link JobEntity} list
+     * and performs a bulk update in the database using the current timestamp.
+     * </p>
+     *
+     * @param jobs The list of {@link JobEntity} objects whose notification status
+     * should be updated to "consumed".
+     * @throws IllegalArgumentException if the {@code jobs} list is null.
+     */
+    public void makeConsumedNotifications(List<JobEntity> jobs) {
+        List<UUID> uuids = jobs.stream().map(JobEntity::getId).toList();
+        repository.markConsumed(uuids, Instant.now());
     }
 }
