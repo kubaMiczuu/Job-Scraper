@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
-import JobList from "../components/JobList.jsx";
-import SearchBar from "../components/SearchBar.jsx";
+import Content from "../components/Content.jsx";
 import ThemeButton  from "../components/ThemeButton.jsx";
 import FilterSidebar from "../components/FilterSidebar.jsx";
 
@@ -82,18 +81,6 @@ const Dashboard = () => {
         ? 'bg-gray-50 text-gray-900'
         : 'bg-gray-900 text-gray-300';
 
-    if(loading){
-        return <div>Loading...</div>;
-    }
-
-    if(error){
-        return <div>Error: {error}</div>;
-    }
-
-    if(jobs.length === 0){
-        return <div>No data available...</div>;
-    }
-
     return (
         <div className={`${themeClasses} min-h-screen flex`}>
 
@@ -109,13 +96,7 @@ const Dashboard = () => {
 
                     <span className={`transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
-                    <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} />
-
-                    <JobList jobs={filteredJobs} theme={theme} />
-
-                    <p className={`${themeClasses} transition text-sm`}>
-                        Showing {filteredJobs.length} of {jobs.length} jobs
-                    </p>
+                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} jobs={jobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} themeClasses={themeClasses}></Content>
 
                 </div>
 
