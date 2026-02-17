@@ -61,7 +61,9 @@ const Dashboard = () => {
 
         const matchesLocation =
             filters.location.length === 0 ||
-            (job.location && filters.location.includes(job.location));
+            (job.location && filters.location.some(location =>
+                job.location.toLowerCase().includes(location.toLowerCase())
+            ));
 
         const matchesSource =
             filters.source.length === 0 ||

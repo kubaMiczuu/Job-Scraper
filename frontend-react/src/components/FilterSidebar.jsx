@@ -19,7 +19,9 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme}) 
         const uniqueEmploymentTypes = [...new Set(jobs.map(job => job.employmentType))].filter(Boolean);
         setEmploymentTypeOptions(uniqueEmploymentTypes);
 
-        const uniqueLocations = [...new Set(jobs.map(job => job.location))].filter(Boolean);
+        const uniqueLocations = [...new Set(jobs.map(job => {
+            return job.location.split(",")[0].trim();
+        }))].filter(Boolean);
         setLocationOptions(uniqueLocations);
 
         const uniqueSources = [...new Set(jobs.map(job => job.source))].filter(Boolean);
