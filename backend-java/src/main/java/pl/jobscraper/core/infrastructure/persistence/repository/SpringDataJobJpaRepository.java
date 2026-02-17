@@ -1,5 +1,6 @@
 package pl.jobscraper.core.infrastructure.persistence.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -208,4 +209,33 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             @Param("limit") int limit,
             @Param("offset") int offset
     );
+
+
+    /**
+     * Finds all jobs with pagination (for /all endpoint).
+     *
+     * @param pageable pagination params
+     * @return Page of JobEntity
+     */
+    @Query("SELECT j FROM JobEntity j ORDER BY j.publishedDate DESC, j.id ASC")
+    Page<JobEntity> findAllJobsPaginated(Pageable pageable);
+
+    /**
+     * Finds jobs filtered by state with pagination.
+     *
+     * @param state job state filter
+     * @param pageable pagination params
+     * @return Page of JobEntity matching state
+     */
+    @Query("SELECT j FROM JobEntity j WHERE j.state = :state ORDER BY j.publishedDate DESC, j.id ASC")
+    Page<JobEntity> findAllJobsByStatePaginated(@Param("state") String state, Pageable pageable);
+
+    /**
+     * Counts jobs by state.
+     * Spring Data generates: SELECT COUNT(*) FROM jobs WHERE state = ?
+     *
+     * @param state job state
+     * @return count of jobs with given state
+     */
+    long countByState(String state);
 }

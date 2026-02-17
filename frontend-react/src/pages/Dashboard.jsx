@@ -17,13 +17,15 @@ const Dashboard = () => {
             setLoading(true);
             setError(null);
 
-            const response = await fetch('http://localhost:8080/api/jobs/all?limit=100');
+            const response = await fetch('http://localhost:8080/api/jobs/all');
 
             if (!response.ok) {
                 throw new Error(`HTTP error, status code: ${response.status}`);
             }
 
-            const jobs = await response.json();
+            const data = await response.json();
+            const jobs = data.content;
+            const totalPages = data.totalPages;
             setJobs(jobs);
         } catch (error) {
             console.error('Failed to fetch jobs:', error);

@@ -270,4 +270,23 @@ public interface JobRepository {
      * @return list of stale jobs
      */
     List<JobEntity> findStaleJobs(Instant cutoff);
+
+    /**
+     * Fetches all jobs with pagination support.
+     *
+     * @param page page number (0-based)
+     * @param size page size
+     * @param state optional state filter (null = all states)
+     * @return list of JobEntity for current page
+     */
+    List<JobEntity> fetchAllPaginated(int page, int size, String state);
+
+    /**
+     * Counts all jobs (optionally filtered by state).
+     *
+     * @param state optional state filter (null = all states)
+     * @return total count
+     */
+    long countAll(String state);
+
 }

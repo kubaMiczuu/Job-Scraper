@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.jobscraper.core.api.dto.JobViewDto;
+import pl.jobscraper.core.api.dto.PageResponse;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
 import pl.jobscraper.core.application.service.AllJobsService;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -25,10 +26,23 @@ public class AllJobsController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<JobViewDto>> getAllJobs(@RequestParam(defaultValue = "100") int limit) {
-        List<JobEntity> entities = allJobsService.fetchAll(limit);
+    public ResponseEntity<PageResponse<JobViewDto>> getAllJobs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String state
+    ) {
+        List<JobEntity> entities = allJobsService.fetchPaginated(page, size, state);
+
+        long totalElements = allJobsService.countTotal(state);
 
         List<JobViewDto> dtos = entities.stream().map(mapper::toViewDto).toList();
-        return ResponseEntity.ok(dtos);
+
+        PageResponse<JobViewDto> response = PageResponse.of(
+                dtos,
+                page,
+                size,
+                totalElements
+        );
+        return ResponseEntity.ok(response);
     }
 }

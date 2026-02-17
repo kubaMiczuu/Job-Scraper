@@ -305,7 +305,6 @@ public class JobRepositoryImpl implements JobRepository {
         return jpaRepository.findAllJobsOrderedOldestFirst(pageable);
     }
 
-
     /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
      * <p>
@@ -430,4 +429,28 @@ public class JobRepositoryImpl implements JobRepository {
     public List<JobEntity> findStaleJobs(Instant cutoff) {
         return jpaRepository.findStaleJobs(cutoff);
     }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<JobEntity> fetchAllPaginated(int page, int size, String state) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (state != null) {
+            return jpaRepository.findAllJobsByStatePaginated(state, pageable).getContent();
+        }else {
+            return jpaRepository.findAllJobsPaginated(pageable).getContent();
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countAll(String state) {
+        if (state != null) {
+            return jpaRepository.countByState(state);
+        }else{
+            return jpaRepository.count();
+        }
+    }
+
 }
