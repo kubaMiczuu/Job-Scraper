@@ -12,7 +12,7 @@ const FilterCategory = ({title, options, selectedValue, onToggle, expand, onExpa
 
             <div onClick={onExpand} className={`flex flex-row justify-between cursor-pointer hover:scale-105`}>
                 <h3 className={"font-bold text-lg mb-3"}>{title}</h3>
-                <h3 className={`font-bold text-lg mb-3 mr-7 hover:scale-115 hover:bg-gray-900 transition-transform duration-300 rounded-xl pt-1 pb-1 pr-2.5 pl-2.5 ${expand ? "rotate-z-90": ""}`}>▷</h3>
+                <h3 className={`${theme === 'light' ? 'hover:bg-gray-200' : 'hover:bg-gray-900'} font-bold text-lg mb-3 mr-7 hover:scale-115 transition-transform duration-300 rounded-xl pt-1 pb-1 pr-2.5 pl-2.5 ${expand ? "rotate-z-90": ""}`}>▷</h3>
             </div>
 
             <div className={`grid transition-[grid-template-rows opacity] duration-300 ease-in-out ${expand ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
