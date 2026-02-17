@@ -61,7 +61,9 @@ const Dashboard = () => {
 
         const matchesLocation =
             filters.location.length === 0 ||
-            (job.location && filters.location.includes(job.location));
+            (job.location && filters.location.some(location =>
+                job.location.toLowerCase().includes(location.toLowerCase())
+            ));
 
         const matchesSource =
             filters.source.length === 0 ||
@@ -87,15 +89,15 @@ const Dashboard = () => {
 
             <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={filters} onFilterChange={handleFilterChange} theme={theme} />
 
-            <div className={`${themeClasses} flex-1 p-8 transition-all`}>
+            <div className={`${themeClasses} flex-1 p-5 transition-all`}>
 
-                <div className="relative flex flex-col justify-between items-center w-full mb-8">
+                <div className="relative flex flex-col justify-between items-center w-full mb-8 p-8">
 
-                    <button onClick={() => {setSidebarOpen(true)}} className={`lg:hidden cursor-pointer absolute left-0 top-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition`}>📊 Filters</button>
+                    <button onClick={() => {setSidebarOpen(true)}} className={`lg:hidden cursor-pointer absolute left-0 top-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition active:scale-95 active:bg-blue-700 active:duration-75 ease-in-out`}>📊 Filters</button>
 
                     <ThemeButton toggleTheme={toggleTheme} themeClasses={themeClasses} theme={theme} />
 
-                    <span className={`transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
+                    <span className={`lg:mt-0 mt-10 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
                     <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} jobs={jobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} themeClasses={themeClasses}></Content>
 

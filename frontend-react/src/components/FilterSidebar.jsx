@@ -19,7 +19,9 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme}) 
         const uniqueEmploymentTypes = [...new Set(jobs.map(job => job.employmentType))].filter(Boolean);
         setEmploymentTypeOptions(uniqueEmploymentTypes);
 
-        const uniqueLocations = [...new Set(jobs.map(job => job.location))].filter(Boolean);
+        const uniqueLocations = [...new Set(jobs.map(job => {
+            return job.location.split(",")[0].trim();
+        }))].filter(Boolean);
         setLocationOptions(uniqueLocations);
 
         const uniqueSources = [...new Set(jobs.map(job => job.source))].filter(Boolean);
@@ -69,10 +71,10 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme}) 
 
                 <div className={`flex justify-between items-center mb-6`}>
                     <h2 className={`text-bold text-2xl`}>Filters</h2>
-                    <button onClick={onClose} className={`lg:hidden text-2xl hover:text-gray-500 hover:scale-110`}>x</button>
+                    <button onClick={onClose} className={`${theme==="light" ? "hover:text-gray-900 hover:bg-gray-200" : "hover:text-gray-500 hover:bg-gray-900"} rounded-lg pb-2 px-2.5 lg:hidden text-2xl hover:scale-110 cursor-pointer active:scale-95 active:duration-75`}>x</button>
                 </div>
 
-                <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 w-full mb-6 py-2 px-4 cursor-pointer`}>Clear All</button>
+                <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 duration-300 w-full mb-6 py-2 px-4 cursor-pointer active:duration-75 active:scale-95 ease-in-out active:bg-red-600`}>Clear All</button>
 
                 <FilterCategory title={"Seniority"} options={seniorityOptions} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} expand={seniorityExpand} onExpand={() => {handleExpand(setSeniorityExpand)}} theme={theme}/>
 
