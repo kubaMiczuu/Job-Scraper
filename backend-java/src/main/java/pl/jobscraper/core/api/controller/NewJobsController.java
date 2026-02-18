@@ -95,7 +95,7 @@ public class NewJobsController {
      */
     @GetMapping("/new")
     public ResponseEntity<List<JobViewDto>> getNewJobs(
-            @RequestParam(defaultValue = "100") int limit,
+            @RequestParam(defaultValue = "25") int limit,
             @RequestParam(defaultValue = "0") int offset,
             @RequestParam(name = "location",  required = false) String location,
             @RequestParam(name = "seniority", required = false) Seniority seniority,
