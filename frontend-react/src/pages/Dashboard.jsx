@@ -11,22 +11,31 @@ const Dashboard = () => {
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [theme, setTheme] = useState("dark");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(null);
 
-    const fetchJobs = async () => {
+    const fetchJobs = async (page = 1, size= 2) => {
         try {
             setLoading(true);
             setError(null);
 
-            const response = await fetch('http://localhost:8080/api/jobs/all');
+            const params = new URLSearchParams({
+                page: page-1,
+                size: size
+            });
+
+            const response = await fetch(`http://localhost:8080/api/jobs/all?${params}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error, status code: ${response.status}`);
             }
 
             const data = await response.json();
-            const jobs = data.content;
-            const totalPages = data.totalPages;
-            setJobs(jobs);
+
+            setJobs(data.content || []);
+            setCurrentPage(data.page + 1);
+            setTotalPages(data.totalPages);
+
         } catch (error) {
             console.error('Failed to fetch jobs:', error);
             setError(error.message);
@@ -44,8 +53,8 @@ const Dashboard = () => {
     );
 
     useEffect(() => {
-        fetchJobs();
-    }, [])
+        fetchJobs(currentPage);
+    }, [currentPage])
 
     const filteredJobs = jobs.filter(job => {
         const matchesSearch =
@@ -101,7 +110,7 @@ const Dashboard = () => {
 
                     <span className={`lg:mt-0 mt-10 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
-                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} jobs={jobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} themeClasses={themeClasses}></Content>
+                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}></Content>
 
                 </div>
 

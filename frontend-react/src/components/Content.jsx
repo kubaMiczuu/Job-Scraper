@@ -1,8 +1,9 @@
 import React from "react";
 import SearchBar from "./SearchBar.jsx";
 import JobList from "./JobList.jsx";
+import Pagination from "./Pagination.jsx";
 
-const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, jobs, filteredJobs, theme, themeClasses}) => {
+const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filteredJobs, theme, currentPage, totalPages, setCurrentPage}) => {
     if(loading) {
         return (
             <div className={`flex flex-row text-6xl border-t w-full justify-center items-center pt-50`}>
@@ -28,9 +29,7 @@ const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, jobs, fi
 
             <JobList jobs={filteredJobs} theme={theme} />
 
-            <p className={`${themeClasses} transition text-sm`}>
-                Showing {filteredJobs.length} of {jobs.length} jobs
-            </p>
+            <Pagination currentPage={currentPage} totalPages={totalPages} theme={theme} setCurrentPage={setCurrentPage}></Pagination>
         </>
     )
 }
