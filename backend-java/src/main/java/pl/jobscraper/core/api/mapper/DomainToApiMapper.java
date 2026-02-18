@@ -1,8 +1,10 @@
 package pl.jobscraper.core.api.mapper;
 
 import org.springframework.stereotype.Component;
+import pl.jobscraper.core.api.dto.ConsumedResponseDto;
 import pl.jobscraper.core.api.dto.JobIngestResponseDto;
 import pl.jobscraper.core.api.dto.JobViewDto;
+import pl.jobscraper.core.application.service.ConsumptionService;
 import pl.jobscraper.core.application.service.JobIngestService.IngestResult;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
@@ -53,5 +55,15 @@ public class DomainToApiMapper {
                 entity.getDescriptionSnippet(),
                 entity.getEnteredNewAt()
         );
+    }
+
+    /**
+     * Converts ConsumptionResult to ConsumedResponseDto.
+     *
+     * @param result domain result from service
+     * @return API response DTO
+     */
+    public ConsumedResponseDto toConsumedDto(ConsumptionService.ConsumptionResult result) {
+        return new ConsumedResponseDto(result.requested(), result.marked(), result.alreadyConsumed(), result.notFound());
     }
 }

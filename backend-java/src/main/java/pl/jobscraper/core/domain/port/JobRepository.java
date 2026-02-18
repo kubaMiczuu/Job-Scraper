@@ -180,6 +180,20 @@ public interface JobRepository {
     List<JobEntity> fetchAllOldestFirst(int limit);
 
     /**
+     * Statistics from mark-consumed operation.
+     *
+     * @param marked         count of NEW → CONSUMED
+     * @param alreadyConsumed count already CONSUMED
+     * @param notFound       count of non-existent IDs
+     */
+    record ConsumptionStats(
+            int marked,
+            int alreadyConsumed,
+            int notFound
+    ){
+    }
+
+    /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
      * <p>
      * Called by Notifier after successfully sending notifications.
@@ -218,7 +232,7 @@ public interface JobRepository {
      * @param ids list of job IDs to mark as consumed
      * @param now current timestamp (for state_changed_at)
      */
-    void markConsumed(List<UUID> ids, Instant now);
+    ConsumptionStats markConsumed(List<UUID> ids, Instant now);
 
     /**
      * Marks jobs as STALE (NEW → STALE transition, TTL cleanup).

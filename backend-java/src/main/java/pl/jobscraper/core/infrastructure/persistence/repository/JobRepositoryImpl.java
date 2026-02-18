@@ -348,9 +348,12 @@ public class JobRepositoryImpl implements JobRepository {
      * @param now current timestamp (for state_changed_at)
      */
     @Override
-    public void markConsumed(List<UUID> ids, Instant now) {
+    public JobRepository.ConsumptionStats markConsumed(List<UUID> ids, Instant now) {
         // 1. Fetch all entities by IDs
         List<JobEntity> entities = jpaRepository.findAllById(ids);
+
+        int marked = 0;
+        int alreadyConsumed = 0;
 
         // 2. Update state for each entity
         for  (JobEntity entity : entities) {
@@ -359,6 +362,9 @@ public class JobRepositoryImpl implements JobRepository {
                 entity.setState(JobState.CONSUMED);
                 entity.setStateChangedAt(now);
                 entity.setEnteredNewAt(null); // Remove from NEW queue
+                marked++;
+            }else if (entity.getState() == JobState.CONSUMED) {
+                alreadyConsumed++;
             }
             // If already CONSUMED or STALE: no-op (idempotent)
         }
@@ -366,6 +372,10 @@ public class JobRepositoryImpl implements JobRepository {
         // 3. Batch save (Spring Data JPA generates UPDATE for changed entities)
         jpaRepository.saveAll(entities);
         // SQL: UPDATE jobs SET state='CONSUMED', state_changed_at=?, entered_new_at=NULL WHERE id IN (...)
+
+        int notFound = ids.size() - entities.size();
+
+        return new JobRepository.ConsumptionStats(marked, alreadyConsumed, notFound);
     }
 
     /**

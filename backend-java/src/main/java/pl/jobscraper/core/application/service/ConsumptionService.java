@@ -69,7 +69,6 @@ public class ConsumptionService {
         this.clock = clock;
     }
 
-
     /**
      * Marks jobs as CONSUMED (processed by Notifier).
      * <p>
@@ -95,13 +94,42 @@ public class ConsumptionService {
      * }</pre>
      *
      * @param ids list of job IDs to mark as consumed
+     * @return result with statistics
      * @throws IllegalArgumentException if ids is null or empty
      */
-    public void markConsumed(List<UUID> ids) {
+    public ConsumptionResult markConsumed(List<UUID> ids) {
         if(ids == null || ids.isEmpty()) {
             throw  new IllegalArgumentException("ids cannot be null or empty");
         }
+
+        int requested = ids.size();
         Instant now = clock.now();
-        repository.markConsumed(ids, now);
+
+        JobRepository.ConsumptionStats stats = repository.markConsumed(ids, now);
+
+        return new ConsumptionResult(
+                requested,
+                stats.marked(),
+                stats.alreadyConsumed(),
+                stats.notFound()
+        );
+    }
+
+    /**
+     * Result of mark-consumed operation.
+     * <p>
+     * Contains statistics about state transitions.
+     *
+     * @param requested      total IDs requested
+     * @param marked         NEW → CONSUMED transitions
+     * @param alreadyConsumed already CONSUMED (no-op)
+     * @param notFound       IDs not in database
+     */
+    public record ConsumptionResult(
+            int requested,
+            int marked,
+            int alreadyConsumed,
+            int notFound
+    ){
     }
 }
