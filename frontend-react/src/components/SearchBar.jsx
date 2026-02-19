@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchBar = ({searchTerm, setSearchTerm, theme}) => {
+const SearchBar = ({searchTerm, setSearchTerm, theme, fetchJobs}) => {
 
     const handleChange = (event) => {
         setSearchTerm(event.target.value);
@@ -13,8 +13,9 @@ const SearchBar = ({searchTerm, setSearchTerm, theme}) => {
     return (
         <>
             <div className="flex flex-row gap-6 w-full max-w-2xl">
-                <input onChange={handleChange} value={searchTerm} placeholder="Search by title, company name or keywords..." className={`${themeClasses} focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
-                <button onClick={handleChange} value={""} className={`text-white p-1 rounded-lg w-1/6 bg-red-500 hover:bg-red-600 transition hover:scale-105 shadow-md cursor-pointer active:scale-95 active:bg-red-600 active:duration-95 ease-in-out`}>Clear</button>
+                <button onClick={() => fetchJobs(1)} className={`text-2xl text-white rounded-lg bg-blue-600 px-2 py-1 hover:bg-blue-700 hover:scale-115 duration-200 transition active:bg-blue-700 active:scale-95 active:duration-75 cursor-pointer`}>⭮</button>
+                <input onChange={handleChange} value={searchTerm} placeholder="Search by title, company name or keywords..." className={`${themeClasses} mt-1 focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
+                <button onClick={handleChange} value={""} className={`text-white p-1 rounded-lg w-1/6 duration-200 bg-red-500 hover:bg-red-600 transition hover:scale-110 shadow-md cursor-pointer active:scale-95 active:bg-red-600 active:duration-95 ease-in-out`}>Clear</button>
             </div>
             <br/>
         </>
