@@ -2,6 +2,7 @@ import React, {useCallback} from "react";
 import SearchBar from "./SearchBar.jsx";
 import JobList from "./JobList.jsx";
 import Pagination from "./Pagination.jsx";
+import RefreshButton from "./RefreshButton.jsx";
 
 const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filteredJobs, theme, currentPage, totalPages, setCurrentPage, fetchJobs}) => {
     if(loading) {
@@ -30,6 +31,8 @@ const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filtered
 
     return (
         <>
+            <RefreshButton fetchJobs={fetchJobs}></RefreshButton>
+
             <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} fetchJobs={fetchJobs} />
 
             <JobList jobs={filteredJobs} theme={theme} />
