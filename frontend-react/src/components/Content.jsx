@@ -3,8 +3,9 @@ import SearchBar from "./SearchBar.jsx";
 import JobList from "./JobList.jsx";
 import Pagination from "./Pagination.jsx";
 import RefreshButton from "./RefreshButton.jsx";
+import itemsPerPage from "./ItemsPerPage.jsx";
 
-const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filteredJobs, theme, currentPage, totalPages, setCurrentPage, fetchJobs}) => {
+const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filteredJobs, theme, currentPage, totalPages, setCurrentPage, fetchJobs, itemsPerPage}) => {
     if(loading) {
         return (
             <div className={`flex flex-row text-6xl border-t w-full justify-center items-center pt-50`}>
@@ -37,7 +38,7 @@ const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filtered
 
             <JobList jobs={filteredJobs} theme={theme} />
 
-            <Pagination currentPage={currentPage} totalPages={totalPages} theme={theme} setCurrentPage={setCurrentPage}></Pagination>
+            <Pagination currentPage={currentPage} totalPages={totalPages} theme={theme} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage}></Pagination>
         </>
     )
 }

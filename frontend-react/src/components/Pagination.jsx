@@ -1,8 +1,10 @@
 import React from "react";
 import PagesBar from "./PagesBar.jsx";
 import PaginationControl from "./PaginationControl.jsx";
+import ItemsPerPage from "./ItemsPerPage.jsx";
+import itemsPerPage from "./ItemsPerPage.jsx";
 
-const Pagination = ({setCurrentPage, currentPage, totalPages, theme}) => {
+const Pagination = ({setCurrentPage, currentPage, totalPages, theme, fetchJobs, itemsPerPage}) => {
 
     return (
         <div className="flex flex-row gap-3 justify-center">
@@ -15,6 +17,8 @@ const Pagination = ({setCurrentPage, currentPage, totalPages, theme}) => {
             {currentPage < totalPages && (
                 <PaginationControl page={currentPage+1} setCurrentPage={setCurrentPage} text={"Next"}></PaginationControl>
             )}
+
+            <ItemsPerPage theme={theme} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage}></ItemsPerPage>
 
         </div>
     )
