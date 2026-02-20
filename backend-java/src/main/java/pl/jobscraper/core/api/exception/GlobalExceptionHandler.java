@@ -51,19 +51,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.web.method.annotation.HandlerMethodValidationException.class)
     public ResponseEntity<ErrorResponse> handleHandlerMethodValidationException(org.springframework.web.method.annotation.HandlerMethodValidationException ex, HttpServletRequest request) {
 
-        List<String> details = ex.getValueResults().stream()
-                .flatMap(result -> result.getResolvableErrors().stream())
-                .map(error -> {
-                    String fieldName = "field";
-                    if(error.getCodes() !=null && error.getCodes().length > 0) {
-                        String code = error.getCodes()[0];
-                        int lastDot = code.lastIndexOf('.');
-                        if(lastDot > 0) {
-                            fieldName = code.substring(lastDot + 1);
-                        }
-                    }
-                    return fieldName + ": " + error.getDefaultMessage();
-                }).toList();
+        List<String> details = ex.getAllErrors().stream()
+                        .map(error->{
+                            String fieldName = "field";
+                            if(error.getCodes() != null && error.getCodes().length > 0) {
+                                for (String code : error.getCodes()) {
+                                    int lastDot = code.lastIndexOf('.');
+                                    if(lastDot >0 && lastDot < code.length()-1) {
+                                        fieldName = code.substring(lastDot + 1);
+                                        break;
+                                    }
+                                }
+                            }
+                            String message = error.getDefaultMessage() != null ? error.getDefaultMessage() : "validation failed";
+                            return fieldName + ": " + message;
+                        }).toList();
+
+
         log.warn("Handler method validation failed for {}: {}", request.getRequestURI(), details);
 
         ErrorResponse errorResponse = ErrorResponse.withDetails(

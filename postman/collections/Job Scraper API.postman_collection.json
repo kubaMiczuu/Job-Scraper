@@ -10,7 +10,10 @@
       "id": "8876d707-1802-444d-9b80-9c860c19f9ea",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": ""
+        }
       },
       "response": []
     },
@@ -19,7 +22,10 @@
       "id": "c6f150f8-7737-4945-9da3-3bcbed561fb1",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": ""
+        }
       },
       "response": []
     },
@@ -27,8 +33,29 @@
       "name": "POST /api/jobs (ingest)",
       "id": "d123f0bf-07a7-419e-abe9-632917ddd4d3",
       "request": {
-        "method": "GET",
-        "header": []
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n  {\r\n    \"title\": \"\",\r\n    \"company\": \"\",\r\n    \"location\": \"Warsaw\",\r\n    \"url\": \"https://google.com/jobs/1\",\r\n    \"publishedDate\": \"2026-02-17T14:00:00Z\"\r\n  }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/jobs",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "jobs"
+          ]
+        }
       },
       "response": []
     },
@@ -36,8 +63,52 @@
       "name": "POST /mark-consumed",
       "id": "b29829f1-8477-4a24-bf09-ae4b1d6cb8c3",
       "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n  {\r\n    \"title\": \"\",\r\n    \"company\": \"\",\r\n    \"location\": \"Warsaw\",\r\n    \"url\": \"https://google.com/jobs/1\",\r\n    \"publishedDate\": \"2026-02-17T14:00:00Z\"\r\n  }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/jobs/mark-consumed",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "jobs",
+            "mark-consumed"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /api/jobs/all",
+      "id": "ba6cda8d-047e-45cd-a1a0-822a3e2acd67",
+      "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/jobs/all",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "jobs",
+            "all"
+          ]
+        }
       },
       "response": []
     }
