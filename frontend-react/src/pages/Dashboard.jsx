@@ -13,8 +13,9 @@ const Dashboard = () => {
     const [theme, setTheme] = useState("dark");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(null);
+    const [itemsPerPage, setItemsPerPage] = useState(12);
 
-    const fetchJobs = async (page = 1, size= 2) => {
+    const fetchJobs = async (page= 1, size= 12) => {
         try {
             setLoading(true);
             setError(null);
@@ -35,6 +36,7 @@ const Dashboard = () => {
             setJobs(data.content || []);
             setCurrentPage(data.page + 1);
             setTotalPages(data.totalPages);
+            setItemsPerPage(size);
 
         } catch (error) {
             console.error('Failed to fetch jobs:', error);
@@ -53,7 +55,7 @@ const Dashboard = () => {
     );
 
     useEffect(() => {
-        fetchJobs(currentPage);
+        fetchJobs(currentPage, itemsPerPage);
     }, [currentPage])
 
     const filteredJobs = jobs.filter(job => {
@@ -110,7 +112,7 @@ const Dashboard = () => {
 
                     <span className={`lg:mt-0 mt-10 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
-                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}></Content>
+                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage}></Content>
 
                 </div>
 
