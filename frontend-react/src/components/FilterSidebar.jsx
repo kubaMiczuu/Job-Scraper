@@ -47,8 +47,8 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, theme, setCurrentPage, s
     }
 
     const handleApplyFilters = () => {
-        setAppliedFilters(pendingFilters);
         setCurrentPage(1);
+        setAppliedFilters(pendingFilters);
     }
 
     const handleFilterChange = (category, values) => {

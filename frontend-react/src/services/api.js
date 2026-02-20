@@ -10,7 +10,8 @@ export const jobsApi = {
             employmentType = [],
             location = [],
             source = [],
-            searchTerm = ''*/
+            searchTerm = '',
+            sort: 'publishedDate,desc'*/
         } = params;
 
         const queryParams = new URLSearchParams();
@@ -24,7 +25,10 @@ export const jobsApi = {
 
         if(searchTerm) {
             queryParams.append('searchTerm', searchTerm);
-        }*/
+        }
+
+        queryParams.append('sort','sort');
+         */
 
         const response = await fetch(`${API_BASE_URL}/jobs/all?${queryParams}`);
 

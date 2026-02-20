@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Content from "../components/Content.jsx";
-import ThemeButton  from "../components/ThemeButton.jsx";
+import ThemeButton from "../components/ThemeButton.jsx";
 import FilterSidebar from "../components/FilterSidebar.jsx";
 import {useDebounce} from "../hooks/useDebounce.js";
 import {jobsApi} from "../services/api.js";
+import Sort from "../components/Sort.jsx";
 
 const Dashboard = () => {
 
@@ -19,9 +20,9 @@ const Dashboard = () => {
     const [lastRefresh, setLastRefresh] = useState(null);
 
     const [jobs, setJobs] = useState([]);
+
     const [searchTerm, setSearchTerm] = useState("");
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
-
     const [pendingFilters, setPendingFilters] = useState({
             seniority: [],
             employmentType: [],
@@ -36,6 +37,7 @@ const Dashboard = () => {
             source: []
         }
     );
+    const [sortBy, setSortBy] = useState(localStorage.getItem("sortBy") || "publishedDate,desc");
 
     const fetchJobs = async () => {
         try {
@@ -46,7 +48,8 @@ const Dashboard = () => {
                 page: currentPage,
                 size: itemsPerPage/**,
                 ...appliedFilters,
-                searchTerm: debouncedSearchTerm*/
+                searchTerm: debouncedSearchTerm,
+                sort: sortBy*/
             });
 
             const data = await response;
@@ -74,7 +77,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchJobs();
-    }, [currentPage, itemsPerPage/**, appliedFilters, debouncedSearchTerm*/]);
+    }, [currentPage, itemsPerPage/**, appliedFilters, debouncedSearchTerm, sortBy*/]);
 
     const toggleTheme = () => {
         const newTheme = theme === "dark" ? "light" : "dark";
@@ -94,6 +97,8 @@ const Dashboard = () => {
             <div className={`${themeClasses} flex-1 p-5 transition-all`}>
 
                 <div className="relative flex flex-col justify-between items-center w-full mb-8 p-8">
+
+                    <Sort theme={theme} setSortBy={setSortBy} sortBy={sortBy}></Sort>
 
                     <button onClick={() => {setSidebarOpen(true)}} className={`lg:hidden cursor-pointer absolute left-0 top-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition active:scale-95 active:bg-blue-700 active:duration-75 ease-in-out`}>📊 Filters</button>
 

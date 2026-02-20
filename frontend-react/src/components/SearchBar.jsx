@@ -18,17 +18,6 @@ const SearchBar = ({setSearchTerm, theme}) => {
 
     return (
         <>
-            <fieldset className={`absolute right-0 border rounded-lg px-1 text-wrap`}>
-                <legend>Sort by</legend>
-                <select className={`focus:outline-none ${theme==='light'?"bg-white":"bg-gray-900"}`}>
-                    <option>date: newest</option>
-                    <option>date: oldest</option>
-                    <option>salary: highest</option>
-                    <option>salary: lowest</option>
-                    <option>company: A-Z</option>
-                    <option>company: Z-A</option>
-                </select>
-            </fieldset>
             <div className="flex lg:flex-row flex-col items-center lg:gap-6 gap-2 w-full max-w-2xl mx-auto">
                 <input onChange={handleChange} value={newSearchTerm} placeholder="Search by title, company name or keywords..." className={`${themeClasses} mt-1 focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
                  <div className={`flex flex-row items-center gap-5 w-2/3`}>
