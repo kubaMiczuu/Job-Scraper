@@ -18,7 +18,7 @@ const Pagination = ({setCurrentPage, currentPage, totalPages, theme, fetchJobs, 
                 <PaginationControl page={currentPage+1} setCurrentPage={setCurrentPage} text={"Next"}></PaginationControl>
             )}
 
-            <ItemsPerPage theme={theme} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage}></ItemsPerPage>
+            <ItemsPerPage theme={theme} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage} currentPage={currentPage}></ItemsPerPage>
 
         </div>
     )
