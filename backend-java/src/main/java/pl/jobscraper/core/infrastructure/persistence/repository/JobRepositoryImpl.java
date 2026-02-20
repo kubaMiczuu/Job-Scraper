@@ -446,7 +446,7 @@ public class JobRepositoryImpl implements JobRepository {
     @Transactional(readOnly = true)
     public List<JobEntity> fetchAllPaginated(int page, int size, String state, String sortBy, String sortOrder) {
 
-        Sort.Direction direction = "desc".equalsIgnoreCase(sortBy) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(direction, sortBy);
 
 
