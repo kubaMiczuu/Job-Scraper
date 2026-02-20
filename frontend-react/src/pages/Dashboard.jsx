@@ -10,13 +10,15 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [theme, setTheme] = useState("dark");
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(null);
-    const [itemsPerPage, setItemsPerPage] = useState(12);
+    const [itemsPerPage, setItemsPerPage] = useState(localStorage.getItem("itemsPerPage") || 12);
+    const [lastRefresh, setLastRefresh] = useState(null);
 
     const fetchJobs = async (page= 1, size= 12) => {
         try {
+            setLastRefresh(`${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
             setLoading(true);
             setError(null);
 
@@ -36,7 +38,10 @@ const Dashboard = () => {
             setJobs(data.content || []);
             setCurrentPage(data.page + 1);
             setTotalPages(data.totalPages);
-            setItemsPerPage(size);
+
+            const newSize = size;
+            setItemsPerPage(newSize);
+            localStorage.setItem('itemsPerPage', newSize);
 
         } catch (error) {
             console.error('Failed to fetch jobs:', error);
@@ -90,7 +95,9 @@ const Dashboard = () => {
     }
 
     const toggleTheme = () => {
-        setTheme(theme === "light" ? "dark" : "light");
+        const newTheme = theme === "dark" ? "light" : "dark";
+        setTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
     }
 
     const themeClasses = theme === 'light'
@@ -112,7 +119,7 @@ const Dashboard = () => {
 
                     <span className={`lg:mt-0 mt-10 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
-                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage}></Content>
+                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage} lastRefresh={lastRefresh}></Content>
 
                 </div>
 
