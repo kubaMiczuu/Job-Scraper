@@ -1,5 +1,5 @@
 # IntelliJ IDEA
-.idea/
+*.idea/
 *.iws
 *.iml
 *.ipr
@@ -44,8 +44,8 @@ build/
 
 ### --- Environment & Secrets --- ###
 .env
-application.properties
-backend-java/src/main/resources/application.properties
+*.env
+backend-java/src/main/resources/properties.env
 
 ### --- Logs & OS --- ###
 *.log
