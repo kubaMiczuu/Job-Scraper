@@ -1,9 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 
 const SearchBar = ({searchTerm, setSearchTerm, theme}) => {
 
+    const [newSearchTerm, setNewSearchTerm] = useState("");
+
     const handleChange = (event) => {
-        setSearchTerm(event.target.value);
+        setNewSearchTerm(event.target.value);
+    }
+
+    const handleSearch = () => {
+        setSearchTerm(newSearchTerm);
     }
 
     const themeClasses = theme === 'light'
@@ -14,11 +20,12 @@ const SearchBar = ({searchTerm, setSearchTerm, theme}) => {
         <>
             <div className={`flex flex-row w-full justify-between items-center`}>
                 <div className="flex flex-row gap-6 w-full max-w-2xl mx-auto">
-                    <input onChange={handleChange} value={searchTerm} placeholder="Search by title, company name or keywords..." className={`${themeClasses} mt-1 focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
+                    <input onChange={handleChange} value={newSearchTerm} placeholder="Search by title, company name or keywords..." className={`${themeClasses} mt-1 focus:outline-none w-full p-4 rounded-lg overflow-hidden shadow-md hover:scale-105 transition h-8`}/>
+                    <button onClick={handleSearch} className={`text-white p-1 rounded-lg w-1/6 duration-200 bg-blue-600 hover:bg-blue-700 transition hover:scale-110 shadow-md cursor-pointer active:scale-95 active:bg-blue-700 active:duration-95 ease-in-out`}>Search</button>
                     <button onClick={handleChange} value={""} className={`text-white p-1 rounded-lg w-1/6 duration-200 bg-red-500 hover:bg-red-600 transition hover:scale-110 shadow-md cursor-pointer active:scale-95 active:bg-red-600 active:duration-95 ease-in-out`}>Clear</button>
-                </div>
-                <fieldset className={`border rounded-lg px-2 `}>
-                    <legend>Sort by:</legend>
+               </div>
+                <fieldset className={`border rounded-lg px-2 mb-3`}>
+                    <legend>Sort by: </legend>
                     <select className={`focus:outline-none ${theme==='light'?"bg-white":"bg-gray-900"}`}>
                         <option>date: newest</option>
                         <option>date: oldest</option>

@@ -2,50 +2,67 @@ import React, {useState, useEffect} from "react";
 import Content from "../components/Content.jsx";
 import ThemeButton  from "../components/ThemeButton.jsx";
 import FilterSidebar from "../components/FilterSidebar.jsx";
+import {useDebounce} from "../hooks/useDebounce.js";
+import {jobsApi} from "../services/api.js";
 
 const Dashboard = () => {
 
-    const [jobs, setJobs] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(null);
     const [itemsPerPage, setItemsPerPage] = useState(localStorage.getItem("itemsPerPage") || 12);
     const [lastRefresh, setLastRefresh] = useState(null);
 
-    const fetchJobs = async (page= 1, size= 12) => {
+    const [jobs, setJobs] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+    const [pendingFilters, setPendingFilters] = useState({
+            seniority: [],
+            employmentType: [],
+            location: [],
+            source: []
+        }
+    );
+    const [appliedFilters, setAppliedFilters] = useState({
+            seniority: [],
+            employmentType: [],
+            location: [],
+            source: []
+        }
+    );
+
+    const fetchJobs = async () => {
         try {
+            setLoading(true);
+            setError(null);
+
+            const response = jobsApi.fetchJobs({
+                page: currentPage,
+                size: itemsPerPage/**,
+                ...appliedFilters,
+                searchTerm: debouncedSearchTerm*/
+            });
+
+            const data = await response;
+
+            setJobs(data.content || [])
+            setCurrentPage(data.page + 1);
+            setTotalPages(data.totalPages);
+
+            const newSize = itemsPerPage;
+            setItemsPerPage(newSize);
+            localStorage.setItem('itemsPerPage', newSize);
+
             const hours = String(new Date().getHours()).padStart(2, '0');
             const minutes = String(new Date().getMinutes()).padStart(2, '0');
             const seconds = String(new Date().getSeconds()).padStart(2, '0');
             setLastRefresh(`${hours}:${minutes}:${seconds}`);
-
-            setLoading(true);
-            setError(null);
-
-            const params = new URLSearchParams({
-                page: page-1,
-                size: size
-            });
-
-            const response = await fetch(`http://localhost:8080/api/jobs/all?${params}`);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error, status code: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            setJobs(data.content || []);
-            setCurrentPage(data.page + 1);
-            setTotalPages(data.totalPages);
-
-            const newSize = size;
-            setItemsPerPage(newSize);
-            localStorage.setItem('itemsPerPage', newSize);
 
         } catch (error) {
             console.error('Failed to fetch jobs:', error);
@@ -55,48 +72,20 @@ const Dashboard = () => {
         }
     }
 
-    const [filters, setFilters] = useState({
-        seniority: [],
-        employmentType: [],
-        location: [],
-        source: []
-        }
-    );
-
     useEffect(() => {
-        fetchJobs(currentPage, itemsPerPage);
-    }, [currentPage])
+        fetchJobs();
+    }, [currentPage, itemsPerPage/**, appliedFilters, debouncedSearchTerm*/]);
 
-    const filteredJobs = jobs.filter(job => {
-        const matchesSearch =
-            job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.techKeywords.some(keyword => keyword.toLowerCase().includes(searchTerm.toLowerCase()));
-
-        const matchesSeniority =
-            filters.seniority.length === 0 ||
-            (job.seniority && filters.seniority.includes(job.seniority));
-
-        const matchesEmploymentType =
-            filters.employmentType.length === 0 ||
-            (job.employmentType && filters.employmentType.includes(job.employmentType));
-
-        const matchesLocation =
-            filters.location.length === 0 ||
-            (job.location && filters.location.some(location =>
-                job.location.toLowerCase().includes(location.toLowerCase())
-            ));
-
-        const matchesSource =
-            filters.source.length === 0 ||
-            (job.source && filters.source.includes(job.source));
-
-        return matchesSearch && matchesSeniority && matchesEmploymentType && matchesLocation && matchesSource;
-    });
+    const handleApplyFilters = () => {
+        setAppliedFilters(pendingFilters);
+        setCurrentPage(1);
+    }
 
     const handleFilterChange = (category, values) => {
-        setFilters(prevState => ({ ...prevState, [category]: values }));
+        setPendingFilters(prevState => ({ ...prevState, [category]: values }));
     }
+
+    const hasUnappliedFilters = JSON.stringify(pendingFilters) !== JSON.stringify(appliedFilters);
 
     const toggleTheme = () => {
         const newTheme = theme === "dark" ? "light" : "dark";
@@ -111,7 +100,7 @@ const Dashboard = () => {
     return (
         <div className={`${themeClasses} min-h-screen flex overflow-hidden`}>
 
-            <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={filters} onFilterChange={handleFilterChange} theme={theme} />
+            <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={pendingFilters} onFilterChange={handleFilterChange} theme={theme} handleApplyFilters={handleApplyFilters} hasUnappliedFilters={hasUnappliedFilters} />
 
             <div className={`${themeClasses} flex-1 p-5 transition-all`}>
 
@@ -123,7 +112,7 @@ const Dashboard = () => {
 
                     <span className={`lg:mt-0 mt-10 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
-                    <Content loading={loading} error={error} jobLength={jobs.length} filteredJobs={filteredJobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage} lastRefresh={lastRefresh}></Content>
+                    <Content loading={loading} error={error} jobLength={jobs.length} jobs={jobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage} lastRefresh={lastRefresh}></Content>
 
                 </div>
 

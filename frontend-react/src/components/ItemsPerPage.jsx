@@ -1,12 +1,13 @@
 import React from "react";
 
-const itemsPerPage = ({itemsPerPage, theme, fetchJobs, currentPage}) => {
+const itemsPerPage = ({itemsPerPage, setItemsPerPage, theme, currentPage, setCurrentPage}) => {
 
     const handleChange = (event) => {
         const newSize = event.target.value;
         const firstItemIndex = (currentPage - 1)*itemsPerPage;
         const newPage = Math.floor(firstItemIndex/newSize)+1;
-        fetchJobs(newPage, newSize);
+        setItemsPerPage(newSize);
+        setCurrentPage(newPage);
     }
 
     return (

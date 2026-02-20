@@ -4,7 +4,7 @@ import PaginationControl from "./PaginationControl.jsx";
 import ItemsPerPage from "./ItemsPerPage.jsx";
 import itemsPerPage from "./ItemsPerPage.jsx";
 
-const Pagination = ({setCurrentPage, currentPage, totalPages, theme, fetchJobs, itemsPerPage}) => {
+const Pagination = ({setCurrentPage, currentPage, totalPages, theme, itemsPerPage, setItemsPerPage}) => {
 
     return (
         <div className="flex flex-row gap-3 justify-center">
@@ -18,7 +18,7 @@ const Pagination = ({setCurrentPage, currentPage, totalPages, theme, fetchJobs, 
                 <PaginationControl page={currentPage+1} setCurrentPage={setCurrentPage} text={"Next"}></PaginationControl>
             )}
 
-            <ItemsPerPage theme={theme} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage} currentPage={currentPage}></ItemsPerPage>
+            <ItemsPerPage theme={theme} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage}></ItemsPerPage>
 
         </div>
     )
