@@ -21,13 +21,18 @@ const Content = ({loading, error, jobLength, searchTerm, setSearchTerm, filtered
         return (
             <div className={`w-full flex flex-col justify-center items-center gap-10`}>
                 <div className={`text-6xl pt-50 border-t w-full text-center`}>No data available</div>
-                <button onClick={() => fetchJobs()} className={`w-1/4 text-4xl shadow-md duration-300 text-white py-3 px-2 rounded-lg bg-red-500 hover:bg-red-600 hover:scale-105 active:red-bg-600 active:scale-95 active:duration-75 cursor-pointer`}>Retry</button>
+                <button onClick={() => fetchJobs(currentPage, itemsPerPage)} className={`w-1/4 text-4xl shadow-md duration-300 text-white py-3 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 hover:scale-105 active:bg-blue-700 active:scale-95 active:duration-75 cursor-pointer`}>Retry</button>
             </div>
         )
     }
 
     if(error) {
-        return <div className={`text-6xl pt-50 border-t w-full text-center`}>Error: {error}</div>
+        return (
+            <div className={`w-full flex flex-col justify-center items-center gap-10`}>
+                <div className={`text-6xl pt-50 border-t w-full text-center`}>Error: {error}</div>
+                <button onClick={() => fetchJobs(currentPage, itemsPerPage)} className={`w-1/4 text-4xl shadow-md duration-300 text-white py-3 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 hover:scale-105 active:bg-blue-700 active:scale-95 active:duration-75 cursor-pointer`}>Retry</button>
+            </div>
+        )
     }
 
     return (
