@@ -24,6 +24,8 @@ server:
   port: 8080
   error:
     include-message: always
+    whitelabel:
+      enabled: false
 
 logging:
   level:

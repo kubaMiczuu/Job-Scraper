@@ -18,7 +18,11 @@ const Dashboard = () => {
 
     const fetchJobs = async (page= 1, size= 12) => {
         try {
-            setLastRefresh(`${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`);
+            const hours = String(new Date().getHours()).padStart(2, '0');
+            const minutes = String(new Date().getMinutes()).padStart(2, '0');
+            const seconds = String(new Date().getSeconds()).padStart(2, '0');
+            setLastRefresh(`${hours}:${minutes}:${seconds}`);
+
             setLoading(true);
             setError(null);
 
@@ -105,7 +109,7 @@ const Dashboard = () => {
         : 'bg-gray-900 text-gray-300';
 
     return (
-        <div className={`${themeClasses} min-h-screen flex`}>
+        <div className={`${themeClasses} min-h-screen flex overflow-hidden`}>
 
             <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={filters} onFilterChange={handleFilterChange} theme={theme} />
 
