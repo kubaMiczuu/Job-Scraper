@@ -2,6 +2,7 @@ package pl.jobscraper.core.infrastructure.persistence.repository;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
 import pl.jobscraper.core.application.dto.JobFilter;
@@ -443,8 +444,13 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<JobEntity> fetchAllPaginated(int page, int size, String state) {
-        Pageable pageable = PageRequest.of(page, size);
+    public List<JobEntity> fetchAllPaginated(int page, int size, String state, String sortBy, String sortOrder) {
+
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortBy) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, sortBy);
+
+
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         if (state != null) {
             return jpaRepository.findAllJobsByStatePaginated(state, pageable).getContent();

@@ -217,7 +217,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @param pageable pagination params
      * @return Page of JobEntity
      */
-    @Query("SELECT j FROM JobEntity j ORDER BY j.publishedDate DESC, j.id ASC")
+    @Query("SELECT j FROM JobEntity j")
     Page<JobEntity> findAllJobsPaginated(Pageable pageable);
 
     /**
@@ -227,7 +227,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @param pageable pagination params
      * @return Page of JobEntity matching state
      */
-    @Query("SELECT j FROM JobEntity j WHERE j.state = :state ORDER BY j.publishedDate DESC, j.id ASC")
+    @Query("SELECT j FROM JobEntity j WHERE j.state = :state")
     Page<JobEntity> findAllJobsByStatePaginated(@Param("state") String state, Pageable pageable);
 
     /**

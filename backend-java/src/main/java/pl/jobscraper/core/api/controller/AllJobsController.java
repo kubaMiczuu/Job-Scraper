@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.jobscraper.core.api.dto.JobViewDto;
 import pl.jobscraper.core.api.dto.PageResponse;
+import pl.jobscraper.core.api.dto.SortField;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
 import pl.jobscraper.core.application.service.AllJobsService;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -29,9 +30,27 @@ public class AllJobsController {
     public ResponseEntity<PageResponse<JobViewDto>> getAllJobs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String state
+            @RequestParam(required = false) String state,
+            @RequestParam(defaultValue = "publishedDate") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder
     ) {
-        List<JobEntity> entities = allJobsService.fetchPaginated(page, size, state);
+        String entitySortField;
+        try {
+            SortField sortField = SortField.valueOf(sortBy.toUpperCase().replace("_", ""));
+            entitySortField = sortField.getFieldName();
+        }catch (IllegalArgumentException e){
+            entitySortField = SortField.PUBLISHED_DATE.getFieldName();
+        }
+
+        String validatedSortOrder = "asc".equalsIgnoreCase(sortOrder) ? "asc" : "desc";
+
+        List<JobEntity> entities = allJobsService.fetchPaginated(
+                page,
+                size,
+                state,
+                entitySortField,
+                validatedSortOrder
+        );
 
         long totalElements = allJobsService.countTotal(state);
 

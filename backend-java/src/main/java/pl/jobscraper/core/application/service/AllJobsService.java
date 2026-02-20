@@ -27,8 +27,8 @@ public class AllJobsService {
      * @param state optional state filter (null = all)
      * @return list of entities for current page
      */
-    public List<JobEntity> fetchPaginated(int page, int size, String state) {
-        return repository.fetchAllPaginated(page, size, state);
+    public List<JobEntity> fetchPaginated(int page, int size, String state, String sortBy, String sortOrder) {
+        return repository.fetchAllPaginated(page, size, state, sortBy, sortOrder);
     }
 
     /**

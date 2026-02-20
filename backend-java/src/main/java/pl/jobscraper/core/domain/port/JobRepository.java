@@ -291,9 +291,11 @@ public interface JobRepository {
      * @param page page number (0-based)
      * @param size page size
      * @param state optional state filter (null = all states)
+     * @param sortBy sort field name
+     * @param sortOrder sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
-    List<JobEntity> fetchAllPaginated(int page, int size, String state);
+    List<JobEntity> fetchAllPaginated(int page, int size, String state, String sortBy, String sortOrder);
 
     /**
      * Counts all jobs (optionally filtered by state).
