@@ -149,26 +149,6 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     List<JobEntity> findStaleJobs(@Param("cutoff") Instant cutoff);
 
     /**
-     * Retrieves all jobs from the database ordered by their publication date in ascending order.
-     * <p>
-     * This query provides a chronological view of all processed jobs, starting from the oldest.
-     * The secondary sort by {@code id} ensures a deterministic order for jobs published
-     * at the exact same time.
-     *
-     * <p><strong>Usage example:</strong>
-     * <pre>{@code
-     * // Fetch the first 50 oldest jobs
-     * Pageable pageable = PageRequest.of(0, 50);
-     * List<JobEntity> jobs = repo.findAllJobsOrderedOldestFirst(pageable);
-     * }</pre>
-     *
-     * @param pageable pagination and sorting information (e.g., page number and size)
-     * @return a list of all job entities, ordered from oldest to newest
-     */
-    @Query("SELECT j FROM JobEntity j ORDER BY j.publishedDate ASC, j.id ASC")
-    List<JobEntity> findAllJobsOrderedOldestFirst(Pageable pageable);
-
-    /**
      * Finds NEW jobs with dynamic filters using a native PostgreSQL query.
      * <p>
      * This method handles:

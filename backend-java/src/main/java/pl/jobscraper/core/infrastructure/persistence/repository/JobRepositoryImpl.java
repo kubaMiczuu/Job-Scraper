@@ -295,18 +295,6 @@ public class JobRepositoryImpl implements JobRepository {
     }
 
     /**
-     * Fetches all jobs ordered by their publication date (oldest first).
-     *
-     * @param limit maximum number of records to fetch
-     * @return list of job entities
-     */
-    @Override
-    public List<JobEntity> fetchAllOldestFirst(int limit) {
-        Pageable pageable = PageRequest.of(0, limit);
-        return jpaRepository.findAllJobsOrderedOldestFirst(pageable);
-    }
-
-    /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
      * <p>
      * <strong>Flow:</strong>

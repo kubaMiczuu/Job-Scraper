@@ -169,29 +169,13 @@ public interface JobRepository {
     List<JobEntity> fetchNewWithFilters(JobFilter filter, int limit, int offset);
 
     /**
-     * Fetches all jobs ordered oldest first.
-     * <p>
-     * Returns JobEntity (not Job) because controller needs metadata (id, enteredNewAt).
-     * Controller will map entity → Job → JobViewDto.
-     *
-     * @param limit maximum number of jobs to return
-     * @return list of JobEntity (oldest first), up to limit
-     */
-    List<JobEntity> fetchAllOldestFirst(int limit);
-
-    /**
      * Statistics from mark-consumed operation.
      *
      * @param marked         count of NEW → CONSUMED
      * @param alreadyConsumed count already CONSUMED
      * @param notFound       count of non-existent IDs
      */
-    record ConsumptionStats(
-            int marked,
-            int alreadyConsumed,
-            int notFound
-    ){
-    }
+    record ConsumptionStats(int marked, int alreadyConsumed, int notFound){}
 
     /**
      * Marks jobs as CONSUMED (NEW → CONSUMED transition).
