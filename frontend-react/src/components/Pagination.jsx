@@ -2,7 +2,6 @@ import React from "react";
 import PagesBar from "./PagesBar.jsx";
 import PaginationControl from "./PaginationControl.jsx";
 import ItemsPerPage from "./ItemsPerPage.jsx";
-import itemsPerPage from "./ItemsPerPage.jsx";
 
 const Pagination = ({setCurrentPage, currentPage, totalPages, theme, itemsPerPage, setItemsPerPage}) => {
 

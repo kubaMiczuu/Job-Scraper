@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React from "react";
 import SearchBar from "./SearchBar.jsx";
 import JobList from "./JobList.jsx";
 import Pagination from "./Pagination.jsx";

@@ -76,17 +76,6 @@ const Dashboard = () => {
         fetchJobs();
     }, [currentPage, itemsPerPage/**, appliedFilters, debouncedSearchTerm*/]);
 
-    const handleApplyFilters = () => {
-        setAppliedFilters(pendingFilters);
-        setCurrentPage(1);
-    }
-
-    const handleFilterChange = (category, values) => {
-        setPendingFilters(prevState => ({ ...prevState, [category]: values }));
-    }
-
-    const hasUnappliedFilters = JSON.stringify(pendingFilters) !== JSON.stringify(appliedFilters);
-
     const toggleTheme = () => {
         const newTheme = theme === "dark" ? "light" : "dark";
         setTheme(newTheme);
@@ -100,17 +89,17 @@ const Dashboard = () => {
     return (
         <div className={`${themeClasses} min-h-screen flex overflow-hidden`}>
 
-            <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={pendingFilters} onFilterChange={handleFilterChange} theme={theme} handleApplyFilters={handleApplyFilters} hasUnappliedFilters={hasUnappliedFilters} />
+            <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={pendingFilters} theme={theme} setCurrentPage={setCurrentPage} setPendingFilters={setPendingFilters} pendingFilters={pendingFilters} setAppliedFilters={setAppliedFilters} appliedFilters={appliedFilters} />
 
             <div className={`${themeClasses} flex-1 p-5 transition-all`}>
 
                 <div className="relative flex flex-col justify-between items-center w-full mb-8 p-8">
 
-                    <button onClick={() => {setSidebarOpen(true)}} className={`lg:hidden cursor-pointer absolute left-0 top-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition active:scale-95 active:bg-blue-700 active:duration-75 ease-in-out`}>📊 Filters</button>
+                    <button onClick={() => {setSidebarOpen(true)}} className={`lg:hidden cursor-pointer absolute left-0 top-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition active:scale-95 active:bg-blue-700 active:duration-75 ease-in-out`}>📊 Filters</button>
 
                     <ThemeButton toggleTheme={toggleTheme} themeClasses={themeClasses} theme={theme} />
 
-                    <span className={`lg:mt-0 mt-10 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
+                    <span className={`lg:mt-0 mt-15 transition block text-center text-4xl font-bold mb-5`}>Job Offers</span>
 
                     <Content loading={loading} error={error} jobLength={jobs.length} jobs={jobs} searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchJobs={fetchJobs} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage} lastRefresh={lastRefresh}></Content>
 

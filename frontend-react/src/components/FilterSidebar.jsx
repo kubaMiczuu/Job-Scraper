@@ -1,7 +1,7 @@
-import React, {use, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import FilterCategory from './FilterCategory.jsx';
 
-const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme, hasUnappliedFilters, handleApplyFilters}) => {
+const FilterSidebar = ({jobs, isOpen, onClose, filters, theme, setCurrentPage, setPendingFilters, pendingFilters, setAppliedFilters, appliedFilters}) => {
 
     const [seniorityOptions, setSeniorityOptions] = useState([]);
     const [employmentTypeOptions, setEmploymentTypeOptions] = useState([]);
@@ -12,6 +12,10 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme, h
     const [employmentTypeExpand, setEmploymentTypeExpand] = useState(false);
     const [locationExpand, setLocationExpand] = useState(false);
     const [sourceExpand, setSourceExpand] = useState(false);
+
+    const themeClasses = theme === 'light'
+        ? 'bg-white text-gray-900 border-gray-300'
+        : 'bg-gray-800 text-gray-300 border-gray-700';
 
     useEffect(() => {
         const uniqueSeniorities = [...new Set(jobs.map(job => job.seniority))].filter(Boolean);
@@ -30,28 +34,38 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme, h
 
     }, [jobs])
 
-    const themeClasses = theme === 'light'
-        ? 'bg-white text-gray-900 border-gray-300'
-        : 'bg-gray-800 text-gray-300 border-gray-700';
+    const handleExpand = (setExpand) => {
+        setExpand(prev => !prev);
+    }
 
     const handleToggle = (category, value) => {
         const currentValues = filters[category];
         const newValues = currentValues.includes(value)
         ? currentValues.filter(v => v !== value) : [...currentValues, value];
 
-        onFilterChange(category, newValues);
+        handleFilterChange(category, newValues);
     }
 
-    const clearAllFilters = () => {
-        onFilterChange('seniority', [])
-        onFilterChange('employmentType', [])
-        onFilterChange('location', [])
-        onFilterChange('source', [])
+    const handleApplyFilters = () => {
+        setAppliedFilters(pendingFilters);
+        setCurrentPage(1);
     }
 
-    const handleExpand = (setExpand) => {
-        setExpand(prev => !prev);
+    const handleFilterChange = (category, values) => {
+        setPendingFilters(prevState => ({ ...prevState, [category]: values }));
     }
+
+    const handleClearFilters = () => {
+        setPendingFilters({
+            seniority: [],
+            employmentType: [],
+            location: [],
+            source: []
+        });
+    }
+
+    const hasUnappliedFilters = JSON.stringify(pendingFilters) !== JSON.stringify(appliedFilters);
+
 
     return (
         <>
@@ -75,7 +89,7 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme, h
                     <button onClick={onClose} className={`${theme==="light" ? "hover:text-gray-900 hover:bg-gray-200" : "hover:text-gray-500 hover:bg-gray-900"} rounded-lg pb-2 px-2.5 lg:hidden text-2xl hover:scale-110 cursor-pointer active:scale-95 active:duration-75`}>x</button>
                 </div>
 
-                <button onClick={clearAllFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 duration-300 w-full mb-6 py-2 px-4 cursor-pointer active:duration-75 active:scale-95 ease-in-out active:bg-red-600`}>Clear All</button>
+                <button onClick={handleClearFilters} className={`bg-red-500 text-white rounded-lg hover:bg-red-600 transition hover:scale-105 duration-300 w-full mb-6 py-2 px-4 cursor-pointer active:duration-75 active:scale-95 ease-in-out active:bg-red-600`}>Clear All</button>
 
                 <FilterCategory title={"Seniority"} options={seniorityOptions} selectedValue={filters.seniority} onToggle={(value) => {handleToggle('seniority', value)}} expand={seniorityExpand} onExpand={() => {handleExpand(setSeniorityExpand)}} theme={theme}/>
 
@@ -85,7 +99,7 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, onFilterChange, theme, h
 
                 <FilterCategory title={"Source"} options={sourceOptions} selectedValue={filters.source} onToggle={(value) => {handleToggle('source', value)}} expand={sourceExpand} onExpand={() => {handleExpand(setSourceExpand)}} theme={theme}/>
 
-                <button onClick={()=>handleApplyFilters} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full hover:scale-105 active:bg-blue-700 active:duration-75 active:scale-95 ease-in-out duration-300">
+                <button onClick={handleApplyFilters} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full hover:scale-105 active:bg-blue-700 active:duration-75 active:scale-95 ease-in-out duration-300">
                     Apply Filters
                     {hasUnappliedFilters && (
                     <span> ({Object.values(filters).flat().length} selected)</span>
