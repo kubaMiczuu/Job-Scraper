@@ -182,14 +182,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             ORDER BY j.entered_new_at ASC, j.id ASC
             LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
-    List<JobEntity> findNewJobsWithFilters(
-            @Param("location") String location,
-            @Param("seniority") String seniority,
-            @Param("keywords") String[] keywords,
-            @Param("limit") int limit,
-            @Param("offset") int offset
-    );
-
+    List<JobEntity> findNewJobsWithFilters(@Param("location") String location,@Param("seniority") String seniority, @Param("keywords") String[] keywords, @Param("limit") int limit, @Param("offset") int offset);
 
     /**
      * Finds all jobs with pagination (for /all endpoint).

@@ -11,8 +11,7 @@ public enum SortField {
     PUBLISHED_DATE("publishedDate"),
     TITLE("title"),
     COMPANY("company"),
-    LOCATION("location"),
-    CREATED_AT("createdAt");
+    SALARY("salary");
 
     private final String fieldName;
 
