@@ -1,5 +1,7 @@
 package pl.jobscraper.core.infrastructure.notifier;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -13,7 +15,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Discord-based implementation of the {@link INotifier} interface.
@@ -22,16 +27,25 @@ import java.util.List;
  */
 @Component
 public class DiscordINotifier implements INotifier {
-    private static final Logger logger =  LoggerFactory.getLogger(DiscordINotifier.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiscordINotifier.class);
+
+    private static final int BATCH_SIZE = 10;
+    private static final int MAX_REQUESTS_PER_MINUTE = 25;
+    private static final long DELAY_BETWEEN_REQUESTS_MS = 60_000 / MAX_REQUESTS_PER_MINUTE;
 
     private final String discordWebhookUrl;
+    private final HttpClient httpClient;
+    private final ObjectMapper objectMapper; //
 
     /**
      * Initializes the Discord notifier with a target Webhook URL.
+     *
      * @param discordWebhookUrl The URL of the Discord webhook, injected from properties.
      */
     public DiscordINotifier(@Value("${discord.webhook.api}") String discordWebhookUrl) {
         this.discordWebhookUrl = discordWebhookUrl;
+        this.httpClient = HttpClient.newHttpClient();
+        this.objectMapper = new ObjectMapper();
 
         logger.info("DiscordNotifier initialized successfully");
     }
@@ -44,101 +58,80 @@ public class DiscordINotifier implements INotifier {
      * @throws InterruptedException If the HTTP communication is interrupted.
      */
     @Override
-    public boolean send(@NonNull List<JobEntity> jobs) throws InterruptedException {
-        logger.info("Sending Discord notifications with {} jobs", jobs.size());
+    public boolean send(@NonNull List<JobEntity> jobs) throws InterruptedException, JsonProcessingException {
+        logger.info("Sending Discord notifications with {} jobs in batches of {}", jobs.size(), BATCH_SIZE);
 
-        String jobsAsJson = formatJobsAsEmbed(jobs);
+        List<List<JobEntity>> batches = new ArrayList<>();
+        for (int i = 0; i < jobs.size(); i += BATCH_SIZE) {
+            batches.add(jobs.subList(i, Math.min(i + BATCH_SIZE, jobs.size())));
+        }
 
-        HttpClient client = HttpClient.newHttpClient();
+        boolean allSuccess = true;
+
+        for (int i = 0; i < batches.size(); i++) {
+            List<JobEntity> batch = batches.get(i);
+
+            boolean success = sendBatch(batch, i + 1, batches.size());
+            if (!success) allSuccess = false;
+
+            if (i < batches.size() - 1) {
+                logger.debug("Rate limiting: waiting {}ms before next batch...", DELAY_BETWEEN_REQUESTS_MS);
+                Thread.sleep(DELAY_BETWEEN_REQUESTS_MS);
+            }
+        }
+        return allSuccess;
+    }
+
+    private boolean sendBatch(List<JobEntity> batch, int currentBatch, int totalBatches) throws JsonProcessingException {
+        logger.info("Sending batch {}/{} ({} jobs)", currentBatch, totalBatches, batch.size());
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("content", String.format("🚀 **New jobs found!** (Batch %d/%d)", currentBatch, totalBatches));
+
+        Map<String, Object> embed = new HashMap<>();
+        embed.put("title", "Job Offers");
+        embed.put("color", 3066993);
+
+        List<Map<String, Object>> fields = new ArrayList<>();
+        for (JobEntity job : batch) {
+            Map<String, Object> field = new HashMap<>();
+
+            field.put("name", job.getTitle());
+
+            String description = String.format("🏢 %s\n📍 %s\n%s🔗 [Link](%s)",
+                    job.getCompany(),
+                    job.getLocation(),
+                    job.getSalary() != null ? "💵 " + job.getSalary() + "\n" : "",
+                    job.getUrl());
+
+            field.put("value", description);
+            field.put("inline", false);
+            fields.add(field);
+        }
+        embed.put("fields", fields);
+        payload.put("embeds", List.of(embed));
+
+        String jsonBody = objectMapper.writeValueAsString(payload);
+
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(discordWebhookUrl))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jobsAsJson))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 200 && response.statusCode() < 300) {
                 logger.info("Discord message sent!");
                 return true;
             } else {
-                logger.info("Failed to send a Discord message! Status: {}", response.statusCode());
+                logger.error("Discord API returned error: {} - {}", response.statusCode(), response.body());
                 return false;
             }
-        } catch (IOException e) {
-            logger.error("Failed to send HTTP Request", e);
+        } catch (IOException | InterruptedException e) {
+            logger.error("Failed to send batch to Discord", e);
             return false;
         }
-    }
-
-    /**
-     * Transforms a list of {@link JobEntity} objects into a Discord Embed JSON string.
-     * Uses emojis for better visualization and escapes special characters to ensure valid JSON.
-     *
-     * @param jobs The list of jobs to be formatted.
-     * @return A string representing the JSON payload for Discord.
-     */
-    public String formatJobsAsEmbed(@NonNull List<JobEntity> jobs) {
-        StringBuilder json = new StringBuilder();
-        json.append("{\"content\":\"New jobs here!!\",");
-        json.append("\"embeds\":[{");
-        json.append("\"title\":\"New Job Offers\",");
-        json.append("\"description\":\"Found ");
-        json.append(jobs.size());
-        json.append(" new offers!\",");
-        json.append("\"color\":3066993,");
-
-        json.append("\"fields\":[");
-        for(int i = 0; i < jobs.size(); i++) {
-            JobEntity job = jobs.get(i);
-
-            json.append("{");
-
-            json.append("\"name\":\"");
-            json.append(escapeJson(job.getTitle()));
-            json.append("\",");
-
-            json.append("\"value\":\"");
-            json.append("\uD83C\uDFE2 ").append(escapeJson(job.getCompany())).append("\\n");
-            json.append("\uD83D\uDCCD ").append(escapeJson(job.getLocation())).append("\\n");
-            if(job.getSeniority() != null) json.append("\uD83C\uDFC5 ").append(escapeJson(job.getSeniority().toString())).append("\\n");
-            if(job.getEmploymentType() != null) json.append("\uD83D\uDCBC ").append(escapeJson(job.getEmploymentType().toString())).append("\\n");
-            if(job.getSalary() != null) json.append("\uD83D\uDCB5 ").append(escapeJson(job.getSalary())).append("\\n");
-            json.append("\uD83D\uDCC5 ").append(escapeJson(job.getPublishedDate().toString())).append("\\n");
-            if(job.getSource() != null) json.append("\uD83D\uDD0E ").append(escapeJson(job.getSource())).append("\\n");
-            json.append("\uD83D\uDD17 ").append("[Visit!](").append(escapeJson(job.getUrl())).append(")");
-            json.append("\",");
-
-            json.append("\"inline\":false");
-
-            json.append("}");
-
-            if(i < jobs.size() - 1) json.append(", ");
-        }
-
-        json.append("]");
-        json.append("}]");
-        json.append("}");
-
-        return  json.toString();
-    }
-
-    /**
-     * Escapes special characters in strings to prevent JSON syntax errors.
-     * Matches standard JSON escaping rules for backslashes, quotes, and newlines.
-     *
-     * @param text The raw string to be escaped.
-     * @return An escaped version of the input string, or an empty string if input is null.
-     */
-    private @NonNull String escapeJson(String text) {
-        if (text == null) return "";
-
-        return text
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
     }
 }
