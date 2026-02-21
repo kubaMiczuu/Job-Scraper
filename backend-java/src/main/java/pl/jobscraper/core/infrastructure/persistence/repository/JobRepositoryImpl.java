@@ -15,6 +15,7 @@ import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 import pl.jobscraper.core.infrastructure.persistence.mapper.JobEntityMapper;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -436,29 +437,35 @@ public class JobRepositoryImpl implements JobRepository {
      *
      * @param page           page number (0-based)
      * @param size           page size
-     * @param seniority      optional seniority filter
-     * @param employmentType optional employment type filter
-     * @param location       optional location filter (partial match)
-     * @param source         optional source filter
+     * @param seniorities      optional seniority filter
+     * @param employmentTypes optional employment type filter
+     * @param locations       optional location filter (partial match)
+     * @param sources         optional source filter
      * @param sortBy         sort field name
      * @param sortOrder      sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
     @Override
     @Transactional(readOnly = true)
-    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority seniority, EmploymentType employmentType, String location, String source, String sortBy, String sortOrder) {
+    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String sortBy, String sortOrder) {
 
         int offset = (page) * size;
         boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
         boolean useSalarySort = "salary".equals(sortBy);
         String dbSortField = mapToDbColumn(sortBy);
-        Object seniorityParam = (seniority!=null) ? seniority.name() : null;
-        Object employmentTypeParam = (employmentType!=null) ? employmentType.name() : null;
+        String[] seniorityParams = (seniorities!=null && seniorities.length>0)
+                ? Arrays.stream(seniorities).map(Enum::name).toArray(String[]::new) : null;
+        String[] employmentTypeParams = (employmentTypes!=null && employmentTypes.length>0)
+                ? Arrays.stream(employmentTypes).map(Enum::name).toArray(String[]::new) : null;
+        String[] locationParams = (locations !=null && locations.length>0)
+                ? locations : null;
+        String[] sourceParams = (sources !=null && sources.length>0)
+                ? sources : null;
 
         if (isAsc){
-            return jpaRepository.findJobsUniversalAsc(seniorityParam,employmentTypeParam,location,source,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalAsc(seniorityParams,employmentTypeParams,locationParams,sourceParams,dbSortField,useSalarySort,size,offset);
         }else{
-            return jpaRepository.findJobsUniversalDesc(seniorityParam,employmentTypeParam,location,source,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalDesc(seniorityParams,employmentTypeParams,locationParams,sourceParams,dbSortField,useSalarySort,size,offset);
         }
     }
 
@@ -471,21 +478,25 @@ public class JobRepositoryImpl implements JobRepository {
         };
     }
 
+
+
     @Override
     @Transactional(readOnly = true)
-    public long countAll(String seniority, String employmentType, String location, String source) {
-        if ((seniority == null || seniority.isBlank())&& (employmentType == null || employmentType.isBlank())&& (location == null || location.isBlank())&& (source == null || source.isBlank())) {
+    public long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources) {
+
+        boolean hasFilters = (seniorities != null && seniorities.length > 0) ||
+                (employmentTypes != null && employmentTypes.length > 0) ||
+                (locations != null && locations.length > 0) ||
+                (sources != null && sources.length > 0);
+
+        if (!hasFilters) {
             return jpaRepository.count();
         }else{
 
-            Seniority seniority1;
-            EmploymentType employmentType1;
+            String[] sParams = (seniorities !=null) ? Arrays.stream(seniorities).map(Enum::name).toArray(String[]::new) : null;
+            String[] eParams = (employmentTypes !=null) ? Arrays.stream(employmentTypes).map(Enum::name).toArray(String[]::new) : null;
 
-            seniority1 = (seniority == null || seniority.isBlank()) ? null : Seniority.valueOf(seniority.toUpperCase());
-
-            employmentType1 = (employmentType == null || employmentType.isBlank()) ? null : EmploymentType.valueOf(employmentType.toUpperCase());
-
-            return jpaRepository.countWithFilters(seniority1, employmentType1,location,source);
+            return jpaRepository.countWithFilters(sParams, eParams,locations,sources);
         }
     }
 

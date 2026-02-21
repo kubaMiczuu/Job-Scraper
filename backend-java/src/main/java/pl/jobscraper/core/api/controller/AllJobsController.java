@@ -1,7 +1,5 @@
 package pl.jobscraper.core.api.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +22,6 @@ public class AllJobsController {
 
     private final AllJobsService allJobsService;
     private final DomainToApiMapper mapper;
-    private static  final Logger log = LoggerFactory.getLogger(AllJobsController.class);
 
     public AllJobsController(AllJobsService allJobsService, DomainToApiMapper mapper) {
         this.allJobsService = allJobsService;
@@ -76,32 +73,16 @@ public class AllJobsController {
     public ResponseEntity<PageResponse<JobViewDto>> getAllJobs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String seniority,
-            @RequestParam(required = false) String employmentType,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String source,
+            @RequestParam(required = false) Seniority[] seniority,
+            @RequestParam(required = false) EmploymentType[] employmentType,
+            @RequestParam(required = false) String[] location,
+            @RequestParam(required = false) String[] source,
             @RequestParam(defaultValue = "publishedDate,desc") String sort
     ) {
         String[] sortParts = sort.split(",");
         String sortBy = sortParts.length > 0 ? sortParts[0].trim() : "publishedDate";
         String sortOrder = sortParts.length > 1 ? sortParts[1].trim() : "desc";
 
-        Seniority jobSeniority = null;
-        if (seniority != null && !seniority.isBlank()) {
-            try {
-                jobSeniority = Seniority.valueOf(seniority.toUpperCase());
-            }catch (IllegalArgumentException e) {
-                log.error("Failed to fetch jobs from database with seniority: {}", seniority, e);
-            }
-        }
-        EmploymentType jobEmploymentType = null;
-        if (employmentType != null && !employmentType.isBlank()) {
-            try {
-                jobEmploymentType = EmploymentType.valueOf(employmentType.toUpperCase());
-            }catch (IllegalArgumentException e) {
-                log.error("Failed to fetch jobs from database with employmentType: {}", employmentType, e);
-            }
-        }
 
         String entitySortField;
         try {
@@ -116,8 +97,8 @@ public class AllJobsController {
         List<JobEntity> entities = allJobsService.fetchPaginated(
                 page,
                 size,
-                jobSeniority,
-                jobEmploymentType,
+                seniority,
+                employmentType,
                 location,
                 source,
                 entitySortField,

@@ -276,25 +276,25 @@ public interface JobRepository {
      *
      * @param page page number (0-based)
      * @param size page size
-     * @param seniority optional seniority filter
-     * @param employmentType optional employmentType filter
-     * @param location optional location filter
-     * @param source optional source filter
+     * @param seniorities optional seniority filter
+     * @param employmentTypes optional employmentType filter
+     * @param locations optional location filter
+     * @param sources optional source filter
      * @param sortBy sort field name
      * @param sortOrder sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
-    List<JobEntity> fetchAllPaginated(int page, int size, Seniority seniority, EmploymentType employmentType, String location, String source, String sortBy, String sortOrder);
+    List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String sortBy, String sortOrder);
 
     /**
      * Counts all jobs (optionally filtered).
      *
-     * @param seniority optional seniority filter
-     * @param employmentType optional employmentType filter
-     * @param location optional location filter
-     * @param source optional source filter
+     * @param seniorities optional seniority filter
+     * @param employmentTypes optional employmentType filter
+     * @param locations optional location filter
+     * @param sources optional source filter
      * @return total count
      */
-    long countAll(String seniority, String employmentType, String location, String source);
+    long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources);
 
 }

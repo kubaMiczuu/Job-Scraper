@@ -4,8 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pl.jobscraper.core.domain.model.value.EmploymentType;
-import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
@@ -193,10 +191,10 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * - Dynamic sorting by any field OR numeric salary sorting
      * - Ascending order
      *
-     * @param seniority   optional seniority filter
-     * @param employmentType optional employment filter
-     * @param location optional location filter
-     * @param source optional source filter
+     * @param seniorities   optional seniority filter
+     * @param employmentTypes optional employment filter
+     * @param locations optional location filter
+     * @param sources optional source filter
      * @param sortField  field to sort by (e.g., "company", "title", "published_date")
      * @param useSalarySort if true, uses numeric salary extraction; sortField is ignored
      * @param limit      max results
@@ -206,10 +204,10 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     @Query(value = """
         SELECT * FROM jobs\s
         WHERE 1=1
-            AND (CAST(:seniority AS text) IS NULL OR seniority = CAST(:seniority AS text))
-            AND (CAST(:employmentType AS text) IS NULL OR employment_type = CAST(:employmentType AS text))
-            AND (CAST(:location AS text) IS NULL OR LOWER(location) LIKE LOWER(CONCAT('%', :location, '%')))
-            AND (CAST(:source AS text) IS NULL OR source = CAST(:source AS text))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:seniorities AS TEXT[]),1),0) = 0 OR seniority = ANY(CAST(:seniorities AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location = ANY(CAST(:locations AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -229,10 +227,10 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             id ASC
         LIMIT :limit OFFSET :offset""", nativeQuery = true)
     List<JobEntity> findJobsUniversalAsc(
-            @Param("seniority") Object seniority,
-            @Param("employmentType") Object employmentType,
-            @Param("location") String location,
-            @Param("source") String source,
+            @Param("seniorities") Object[] seniorities,
+            @Param("employmentTypes") Object[] employmentTypes,
+            @Param("locations") String[] locations,
+            @Param("sources") String[] sources,
             @Param("sortField") String sortField,
             @Param("useSalarySort") boolean useSalarySort ,
             @Param("limit") int limit, @Param("offset") int offset);
@@ -240,10 +238,10 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     @Query(value = """
         SELECT * FROM jobs\s
         WHERE 1=1
-            AND (CAST(:seniority AS text) IS NULL OR seniority = CAST(:seniority AS text))
-            AND (CAST(:employmentType AS text) IS NULL OR employment_type = CAST(:employmentType AS text))
-            AND (CAST(:location AS text) IS NULL OR LOWER(location) LIKE LOWER(CONCAT('%', :location, '%')))
-            AND (CAST(:source AS text) IS NULL OR source = CAST(:source AS text))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:seniorities AS TEXT[]),1),0) = 0 OR seniority = ANY(CAST(:seniorities AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location = ANY(CAST(:locations AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -263,10 +261,10 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             id ASC
         LIMIT :limit OFFSET :offset""", nativeQuery = true)
     List<JobEntity> findJobsUniversalDesc(
-            @Param("seniority") Object seniority,
-            @Param("employmentType") Object employmentType,
-            @Param("location") String location,
-            @Param("source") String source,
+            @Param("seniorities") Object[] seniorities,
+            @Param("employmentTypes") Object[] employmentTypes,
+            @Param("locations") String[] locations,
+            @Param("sources") String[] sources,
             @Param("sortField") String sortField,
             @Param("useSalarySort") boolean useSalarySort ,
             @Param("limit") int limit, @Param("offset") int offset);
@@ -274,24 +272,24 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     /**
      * Counts jobs matching filters.
      *
-     * @param seniority      optional seniority filter
-     * @param employmentType optional employment type filter
-     * @param location       optional location filter (partial match)
-     * @param source         optional source filter
+     * @param seniorities      optional seniority filter
+     * @param employmentTypes optional employment type filter
+     * @param locations       optional location filter (partial match)
+     * @param sources         optional source filter
      * @return count of jobs matching all filters
      */
     @Query(value = """
         SELECT COUNT(*) FROM jobs\s
         WHERE 1=1
-            AND (CAST(:seniority AS text) IS NULL OR seniority = CAST(:seniority AS text))
-            AND (CAST(:employmentType AS text) IS NULL OR employment_type = CAST(:employmentType AS text))
-            AND (CAST(:location AS text) IS NULL OR LOWER(location) LIKE LOWER(CONCAT('%', :location, '%')))
-            AND (CAST(:source AS text) IS NULL OR source = CAST(:source AS text))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:seniorities AS TEXT[]),1),0) = 0 OR seniority = ANY(CAST(:seniorities AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location = ANY(CAST(:locations AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
    \s""", nativeQuery = true)
     long countWithFilters(
-            @Param("seniority") Seniority seniority,
-            @Param("employmentType") EmploymentType employmentType,
-            @Param("location") String location,
-            @Param("source") String source
+            @Param("seniorities") String[] seniorities,
+            @Param("employmentTypes") String[] employmentTypes,
+            @Param("locations") String[] locations,
+            @Param("sources") String[] sources
     );
 }
