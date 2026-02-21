@@ -2,6 +2,7 @@ package pl.jobscraper.core.application.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class ScheduleService {
      * Triggered automatically based on the {@code notification.cron} property.
      * @throws RuntimeException if the notification cycle encounters an IO or interruption error.
      */
-    @Scheduled(cron = "${notification.cron}")
+    @Scheduled(cron = "${notification.cron.active}")
     public void sendNotifications() {
         try {
             logger.info("Starting notification service");
@@ -43,14 +44,4 @@ public class ScheduleService {
             throw new RuntimeException(e);
         }
     }
-
-//    /**
-//     * A secondary entry point used for testing purposes.
-//     * Triggered based on the {@code notification.test.cron} property,
-//     * allowing for more frequent or manual-like test runs.
-//     */
-//    @Scheduled(cron = "${notification.test.cron}")
-//    public void testNotifications() {
-//        sendNotifications();
-//    }
 }
