@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import pl.jobscraper.core.domain.model.JobState;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
@@ -191,7 +192,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * - Dynamic sorting by any field OR numeric salary sorting
      * - Ascending order
      *
-     * @param state      optional state filter (null = all states)
+     * @param statusFilter   optional state filter (null = all states)
      * @param sortField  field to sort by (e.g., "company", "title", "published_date")
      * @param useSalarySort if true, uses numeric salary extraction; sortField is ignored
      * @param limit      max results
@@ -199,7 +200,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @return list of JobEntity matching criteria, sorted ascending
      */
     @Query(value = """
-        SELECT * FROM jobs WHERE (:state IS NULL OR state = CAST(:state AS text))
+        SELECT * FROM jobs WHERE (:statusFilter IS NULL OR state = CAST(:statusFilter AS text))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -218,10 +219,10 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             END ASC,
             id ASC
         LIMIT :limit OFFSET :offset""", nativeQuery = true)
-    List<JobEntity> findJobsUniversalAsc(@Param("state") String state, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort , @Param("limit") int limit, @Param("offset") int offset);
+    List<JobEntity> findJobsUniversalAsc(@Param("statusFilter") Object statusFilter, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort , @Param("limit") int limit, @Param("offset") int offset);
 
     @Query(value = """
-        SELECT * FROM jobs WHERE (:state IS NULL OR state = CAST(:state AS text))
+        SELECT * FROM jobs WHERE (:statusFilter IS NULL OR state = CAST(:statusFilter AS text))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -240,7 +241,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             END DESC,
             id ASC
         LIMIT :limit OFFSET :offset""", nativeQuery = true)
-    List<JobEntity> findJobsUniversalDesc(@Param("state") String state, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort ,@Param("limit") int limit, @Param("offset") int offset);
+    List<JobEntity> findJobsUniversalDesc(@Param("statusFilter") Object statusFilter, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort ,@Param("limit") int limit, @Param("offset") int offset);
 
     /**
      * Counts jobs by state.
@@ -249,5 +250,5 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @param state job state
      * @return count of jobs with given state
      */
-    long countByState(String state);
+    long countByState(JobState state);
 }

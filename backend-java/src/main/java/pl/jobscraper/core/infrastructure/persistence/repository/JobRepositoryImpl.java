@@ -437,12 +437,12 @@ public class JobRepositoryImpl implements JobRepository {
         boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
         boolean useSalarySort = "salary".equals(sortBy);
         String dbSortField = mapToDbColumn(sortBy);
-        String stateString = (state!=null) ? state.name() : null;
+        String stateParam = (state!=null) ? state.name() : null;
 
         if (isAsc){
-            return jpaRepository.findJobsUniversalAsc(stateString,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalAsc(stateParam,dbSortField,useSalarySort,size,offset);
         }else{
-            return jpaRepository.findJobsUniversalDesc(stateString,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalDesc(stateParam,dbSortField,useSalarySort,size,offset);
         }
     }
 
@@ -458,10 +458,11 @@ public class JobRepositoryImpl implements JobRepository {
     @Override
     @Transactional(readOnly = true)
     public long countAll(String state) {
-        if (state != null) {
-            return jpaRepository.countByState(state);
-        }else{
+        if (state == null || state.isBlank()) {
             return jpaRepository.count();
+        }else{
+            JobState jobState = JobState.valueOf(state.toUpperCase());
+            return jpaRepository.countByState(jobState);
         }
     }
 
