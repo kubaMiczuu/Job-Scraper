@@ -2,7 +2,8 @@ package pl.jobscraper.core.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.jobscraper.core.domain.model.JobState;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
+import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.domain.port.JobRepository;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
@@ -25,20 +26,23 @@ public class AllJobsService {
      *
      * @param page  page number (0-based)
      * @param size  page size
-     * @param state optional state filter (null = all)
+     * @param seniority optional state filter (null = all)
      * @return list of entities for current page
      */
-    public List<JobEntity> fetchPaginated(int page, int size, JobState state, String sortBy, String sortOrder) {
-        return repository.fetchAllPaginated(page, size, state, sortBy, sortOrder);
+    public List<JobEntity> fetchPaginated(int page, int size, Seniority seniority, EmploymentType employmentType, String location, String source, String sortBy, String sortOrder) {
+        return repository.fetchAllPaginated(page, size, seniority, employmentType, location, source,sortBy, sortOrder);
     }
 
     /**
      * Counts total jobs (all states or filtered by state).
      *
-     * @param state optional state filter (null = all)
+     * @param seniority optional seniority filter
+     * @param employmentType optional employmentType filter
+     * @param location optional location filter
+     * @param source optional source filter
      * @return total count
      */
-    public long countTotal(String state) {
-        return repository.countAll(state);
+    public long countTotal(String seniority, String employmentType, String location, String source) {
+        return repository.countAll(seniority, employmentType, location, source);
     }
 }

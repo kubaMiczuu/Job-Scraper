@@ -3,7 +3,8 @@ package pl.jobscraper.core.domain.port;
 import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.identity.JobIdentity;
 import pl.jobscraper.core.domain.model.Job;
-import pl.jobscraper.core.domain.model.JobState;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
+import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
@@ -275,19 +276,25 @@ public interface JobRepository {
      *
      * @param page page number (0-based)
      * @param size page size
-     * @param state optional state filter (null = all states)
+     * @param seniority optional seniority filter
+     * @param employmentType optional employmentType filter
+     * @param location optional location filter
+     * @param source optional source filter
      * @param sortBy sort field name
      * @param sortOrder sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
-    List<JobEntity> fetchAllPaginated(int page, int size, JobState state, String sortBy, String sortOrder);
+    List<JobEntity> fetchAllPaginated(int page, int size, Seniority seniority, EmploymentType employmentType, String location, String source, String sortBy, String sortOrder);
 
     /**
-     * Counts all jobs (optionally filtered by state).
+     * Counts all jobs (optionally filtered).
      *
-     * @param state optional state filter (null = all states)
+     * @param seniority optional seniority filter
+     * @param employmentType optional employmentType filter
+     * @param location optional location filter
+     * @param source optional source filter
      * @return total count
      */
-    long countAll(String state);
+    long countAll(String seniority, String employmentType, String location, String source);
 
 }

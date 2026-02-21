@@ -8,6 +8,8 @@ import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.identity.JobIdentity;
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.domain.model.JobState;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
+import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.domain.port.JobRepository;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 import pl.jobscraper.core.infrastructure.persistence.mapper.JobEntityMapper;
@@ -429,20 +431,34 @@ public class JobRepositoryImpl implements JobRepository {
     }
 
 
+    /**
+     * Fetches all jobs with pagination, filters, and sorting.
+     *
+     * @param page           page number (0-based)
+     * @param size           page size
+     * @param seniority      optional seniority filter
+     * @param employmentType optional employment type filter
+     * @param location       optional location filter (partial match)
+     * @param source         optional source filter
+     * @param sortBy         sort field name
+     * @param sortOrder      sort direction (ASC/DESC)
+     * @return list of JobEntity for current page
+     */
     @Override
     @Transactional(readOnly = true)
-    public List<JobEntity> fetchAllPaginated(int page, int size, JobState state, String sortBy, String sortOrder) {
+    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority seniority, EmploymentType employmentType, String location, String source, String sortBy, String sortOrder) {
 
         int offset = (page) * size;
         boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
         boolean useSalarySort = "salary".equals(sortBy);
         String dbSortField = mapToDbColumn(sortBy);
-        String stateParam = (state!=null) ? state.name() : null;
+        Object seniorityParam = (seniority!=null) ? seniority.name() : null;
+        Object employmentTypeParam = (employmentType!=null) ? employmentType.name() : null;
 
         if (isAsc){
-            return jpaRepository.findJobsUniversalAsc(stateParam,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalAsc(seniorityParam,employmentTypeParam,location,source,dbSortField,useSalarySort,size,offset);
         }else{
-            return jpaRepository.findJobsUniversalDesc(stateParam,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalDesc(seniorityParam,employmentTypeParam,location,source,dbSortField,useSalarySort,size,offset);
         }
     }
 
@@ -457,12 +473,19 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public long countAll(String state) {
-        if (state == null || state.isBlank()) {
+    public long countAll(String seniority, String employmentType, String location, String source) {
+        if ((seniority == null || seniority.isBlank())&& (employmentType == null || employmentType.isBlank())&& (location == null || location.isBlank())&& (source == null || source.isBlank())) {
             return jpaRepository.count();
         }else{
-            JobState jobState = JobState.valueOf(state.toUpperCase());
-            return jpaRepository.countByState(jobState);
+
+            Seniority seniority1;
+            EmploymentType employmentType1;
+
+            seniority1 = (seniority == null || seniority.isBlank()) ? null : Seniority.valueOf(seniority.toUpperCase());
+
+            employmentType1 = (employmentType == null || employmentType.isBlank()) ? null : EmploymentType.valueOf(employmentType.toUpperCase());
+
+            return jpaRepository.countWithFilters(seniority1, employmentType1,location,source);
         }
     }
 

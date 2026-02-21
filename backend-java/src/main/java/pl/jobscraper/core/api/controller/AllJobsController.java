@@ -12,7 +12,8 @@ import pl.jobscraper.core.api.dto.PageResponse;
 import pl.jobscraper.core.api.dto.SortField;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
 import pl.jobscraper.core.application.service.AllJobsService;
-import pl.jobscraper.core.domain.model.JobState;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
+import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class AllJobsController {
      * <ul>
      *   <li>page: page number, 0-based (default 0)</li>
      *   <li>size: items per page (default 20)</li>
-     *   <li>state: filter by state - NEW, CONSUMED, STALE (optional)</li>
+     *   <li>seniority: filter by seniority - NEW, CONSUMED, STALE (optional)</li>
      *   <li>sort: format "field,direction" (default "publishedDate,desc")</li>
      * </ul>
      *
@@ -59,7 +60,7 @@ public class AllJobsController {
      * GET /api/jobs/all?sort=salary,desc
      *
      * # NEW jobs, sorted by title:
-     * GET /api/jobs/all?state=NEW&sort=title,asc
+     * GET /api/jobs/all?seniority=NEW&sort=title,asc
      *
      * # Page 2, 10 items, sorted by location:
      * GET /api/jobs/all?page=1&size=10&sort=location,asc
@@ -67,7 +68,7 @@ public class AllJobsController {
      *
      * @param page  page number, 0-based (default 0)
      * @param size  items per page (default 20)
-     * @param state optional state filter (NEW, CONSUMED, STALE)
+     * @param seniority optional seniority filter (NEW, CONSUMED, STALE)
      * @param sort  sort parameter: "field,direction" (default "publishedDate,desc")
      * @return paginated response with metadata
      */
@@ -75,19 +76,30 @@ public class AllJobsController {
     public ResponseEntity<PageResponse<JobViewDto>> getAllJobs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String seniority,
+            @RequestParam(required = false) String employmentType,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String source,
             @RequestParam(defaultValue = "publishedDate,desc") String sort
     ) {
         String[] sortParts = sort.split(",");
         String sortBy = sortParts.length > 0 ? sortParts[0].trim() : "publishedDate";
         String sortOrder = sortParts.length > 1 ? sortParts[1].trim() : "desc";
 
-        JobState jobState = null;
-        if (state != null &&  !state.isBlank()) {
+        Seniority jobSeniority = null;
+        if (seniority != null && !seniority.isBlank()) {
             try {
-                jobState = JobState.valueOf(state.toUpperCase());
+                jobSeniority = Seniority.valueOf(seniority.toUpperCase());
             }catch (IllegalArgumentException e) {
-                log.error("Failed to fetch jobs from database with state: {}", state, e);
+                log.error("Failed to fetch jobs from database with seniority: {}", seniority, e);
+            }
+        }
+        EmploymentType jobEmploymentType = null;
+        if (employmentType != null && !employmentType.isBlank()) {
+            try {
+                jobEmploymentType = EmploymentType.valueOf(employmentType.toUpperCase());
+            }catch (IllegalArgumentException e) {
+                log.error("Failed to fetch jobs from database with employmentType: {}", employmentType, e);
             }
         }
 
@@ -104,12 +116,15 @@ public class AllJobsController {
         List<JobEntity> entities = allJobsService.fetchPaginated(
                 page,
                 size,
-                jobState,
+                jobSeniority,
+                jobEmploymentType,
+                location,
+                source,
                 entitySortField,
                 validatedSortOrder
         );
 
-        long totalElements = allJobsService.countTotal(state);
+        long totalElements = allJobsService.countTotal(seniority, employmentType, location, source);
 
         List<JobViewDto> dtos = entities.stream().map(mapper::toViewDto).toList();
 

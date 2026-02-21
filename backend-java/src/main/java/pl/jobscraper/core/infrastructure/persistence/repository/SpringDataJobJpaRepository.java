@@ -4,7 +4,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pl.jobscraper.core.domain.model.JobState;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
+import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
@@ -185,14 +186,17 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     List<JobEntity> findNewJobsWithFilters(@Param("location") String location,@Param("seniority") String seniority, @Param("keywords") String[] keywords, @Param("limit") int limit, @Param("offset") int offset);
 
     /**
-     * Universal query for all jobs with optional state filter and sorting.
+     * Universal query for all jobs with optional seniority filter and sorting.
      * <p>
      * Supports:
-     * - Optional state filter (null = all states)
+     * - Optional seniority filter (null = all seniority)
      * - Dynamic sorting by any field OR numeric salary sorting
      * - Ascending order
      *
-     * @param statusFilter   optional state filter (null = all states)
+     * @param seniority   optional seniority filter
+     * @param employmentType optional employment filter
+     * @param location optional location filter
+     * @param source optional source filter
      * @param sortField  field to sort by (e.g., "company", "title", "published_date")
      * @param useSalarySort if true, uses numeric salary extraction; sortField is ignored
      * @param limit      max results
@@ -200,7 +204,12 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @return list of JobEntity matching criteria, sorted ascending
      */
     @Query(value = """
-        SELECT * FROM jobs WHERE (:statusFilter IS NULL OR state = CAST(:statusFilter AS text))
+        SELECT * FROM jobs\s
+        WHERE 1=1
+            AND (CAST(:seniority AS text) IS NULL OR seniority = CAST(:seniority AS text))
+            AND (CAST(:employmentType AS text) IS NULL OR employment_type = CAST(:employmentType AS text))
+            AND (CAST(:location AS text) IS NULL OR LOWER(location) LIKE LOWER(CONCAT('%', :location, '%')))
+            AND (CAST(:source AS text) IS NULL OR source = CAST(:source AS text))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -219,10 +228,22 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             END ASC,
             id ASC
         LIMIT :limit OFFSET :offset""", nativeQuery = true)
-    List<JobEntity> findJobsUniversalAsc(@Param("statusFilter") Object statusFilter, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort , @Param("limit") int limit, @Param("offset") int offset);
+    List<JobEntity> findJobsUniversalAsc(
+            @Param("seniority") Object seniority,
+            @Param("employmentType") Object employmentType,
+            @Param("location") String location,
+            @Param("source") String source,
+            @Param("sortField") String sortField,
+            @Param("useSalarySort") boolean useSalarySort ,
+            @Param("limit") int limit, @Param("offset") int offset);
 
     @Query(value = """
-        SELECT * FROM jobs WHERE (:statusFilter IS NULL OR state = CAST(:statusFilter AS text))
+        SELECT * FROM jobs\s
+        WHERE 1=1
+            AND (CAST(:seniority AS text) IS NULL OR seniority = CAST(:seniority AS text))
+            AND (CAST(:employmentType AS text) IS NULL OR employment_type = CAST(:employmentType AS text))
+            AND (CAST(:location AS text) IS NULL OR LOWER(location) LIKE LOWER(CONCAT('%', :location, '%')))
+            AND (CAST(:source AS text) IS NULL OR source = CAST(:source AS text))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -241,14 +262,36 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             END DESC,
             id ASC
         LIMIT :limit OFFSET :offset""", nativeQuery = true)
-    List<JobEntity> findJobsUniversalDesc(@Param("statusFilter") Object statusFilter, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort ,@Param("limit") int limit, @Param("offset") int offset);
+    List<JobEntity> findJobsUniversalDesc(
+            @Param("seniority") Object seniority,
+            @Param("employmentType") Object employmentType,
+            @Param("location") String location,
+            @Param("source") String source,
+            @Param("sortField") String sortField,
+            @Param("useSalarySort") boolean useSalarySort ,
+            @Param("limit") int limit, @Param("offset") int offset);
 
     /**
-     * Counts jobs by state.
-     * Spring Data generates: SELECT COUNT(*) FROM jobs WHERE state = ?
+     * Counts jobs matching filters.
      *
-     * @param state job state
-     * @return count of jobs with given state
+     * @param seniority      optional seniority filter
+     * @param employmentType optional employment type filter
+     * @param location       optional location filter (partial match)
+     * @param source         optional source filter
+     * @return count of jobs matching all filters
      */
-    long countByState(JobState state);
+    @Query(value = """
+        SELECT COUNT(*) FROM jobs\s
+        WHERE 1=1
+            AND (CAST(:seniority AS text) IS NULL OR seniority = CAST(:seniority AS text))
+            AND (CAST(:employmentType AS text) IS NULL OR employment_type = CAST(:employmentType AS text))
+            AND (CAST(:location AS text) IS NULL OR LOWER(location) LIKE LOWER(CONCAT('%', :location, '%')))
+            AND (CAST(:source AS text) IS NULL OR source = CAST(:source AS text))
+   \s""", nativeQuery = true)
+    long countWithFilters(
+            @Param("seniority") Seniority seniority,
+            @Param("employmentType") EmploymentType employmentType,
+            @Param("location") String location,
+            @Param("source") String source
+    );
 }
