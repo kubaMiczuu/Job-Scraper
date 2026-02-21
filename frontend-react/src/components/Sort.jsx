@@ -16,8 +16,8 @@ const Sort = ({theme, sortBy, setSortBy}) => {
                 <option value="publishedDate,asc">date: oldest</option>
                 <option value="salary,desc">salary: highest</option>
                 <option value="salary,asc">salary: lowest</option>
-                <option value="companyName,desc">company: A-Z</option>
-                <option value="companyName,asc">company: Z-A</option>
+                <option value="company,asc">company: A-Z</option>
+                <option value="company,desc">company: Z-A</option>
             </select>
         </fieldset>
     )
