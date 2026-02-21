@@ -3,6 +3,7 @@ package pl.jobscraper.core.domain.port;
 import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.domain.identity.JobIdentity;
 import pl.jobscraper.core.domain.model.Job;
+import pl.jobscraper.core.domain.model.JobState;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
@@ -279,7 +280,7 @@ public interface JobRepository {
      * @param sortOrder sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
-    List<JobEntity> fetchAllPaginated(int page, int size, String state, String sortBy, String sortOrder);
+    List<JobEntity> fetchAllPaginated(int page, int size, JobState state, String sortBy, String sortOrder);
 
     /**
      * Counts all jobs (optionally filtered by state).

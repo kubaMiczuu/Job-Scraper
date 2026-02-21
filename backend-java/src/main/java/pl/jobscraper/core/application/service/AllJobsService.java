@@ -2,6 +2,7 @@ package pl.jobscraper.core.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.jobscraper.core.domain.model.JobState;
 import pl.jobscraper.core.domain.port.JobRepository;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
@@ -27,7 +28,7 @@ public class AllJobsService {
      * @param state optional state filter (null = all)
      * @return list of entities for current page
      */
-    public List<JobEntity> fetchPaginated(int page, int size, String state, String sortBy, String sortOrder) {
+    public List<JobEntity> fetchPaginated(int page, int size, JobState state, String sortBy, String sortOrder) {
         return repository.fetchAllPaginated(page, size, state, sortBy, sortOrder);
     }
 

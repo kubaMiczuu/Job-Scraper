@@ -1,6 +1,5 @@
 package pl.jobscraper.core.infrastructure.persistence.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -185,23 +184,63 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
     List<JobEntity> findNewJobsWithFilters(@Param("location") String location,@Param("seniority") String seniority, @Param("keywords") String[] keywords, @Param("limit") int limit, @Param("offset") int offset);
 
     /**
-     * Finds all jobs with pagination (for /all endpoint).
+     * Universal query for all jobs with optional state filter and sorting.
+     * <p>
+     * Supports:
+     * - Optional state filter (null = all states)
+     * - Dynamic sorting by any field OR numeric salary sorting
+     * - Ascending order
      *
-     * @param pageable pagination params
-     * @return Page of JobEntity
+     * @param state      optional state filter (null = all states)
+     * @param sortField  field to sort by (e.g., "company", "title", "published_date")
+     * @param useSalarySort if true, uses numeric salary extraction; sortField is ignored
+     * @param limit      max results
+     * @param offset     pagination offset
+     * @return list of JobEntity matching criteria, sorted ascending
      */
-    @Query("SELECT j FROM JobEntity j")
-    Page<JobEntity> findAllJobsPaginated(Pageable pageable);
+    @Query(value = """
+        SELECT * FROM jobs WHERE (:state IS NULL OR state = CAST(:state AS text))
+        ORDER BY
+            CASE
+                WHEN :useSalarySort = true THEN
+                    CASE
+                        WHEN salary IS NULL OR salary !~ '^[0-9]' THEN 2147483647
+                        ELSE CAST(substring(salary FROM '^[0-9]+') AS INTEGER)
+                    END
+                ELSE NULL
+            END ASC,
+            CASE WHEN :useSalarySort = false THEN
+                CASE :sortField
+                    WHEN 'company' THEN company
+                    WHEN 'salary' THEN salary
+                    WHEN 'publishedDate' THEN CAST(published_date AS TEXT)
+                END
+            END ASC,
+            id ASC
+        LIMIT :limit OFFSET :offset""", nativeQuery = true)
+    List<JobEntity> findJobsUniversalAsc(@Param("state") String state, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort , @Param("limit") int limit, @Param("offset") int offset);
 
-    /**
-     * Finds jobs filtered by state with pagination.
-     *
-     * @param state job state filter
-     * @param pageable pagination params
-     * @return Page of JobEntity matching state
-     */
-    @Query("SELECT j FROM JobEntity j WHERE j.state = :state")
-    Page<JobEntity> findAllJobsByStatePaginated(@Param("state") String state, Pageable pageable);
+    @Query(value = """
+        SELECT * FROM jobs WHERE (:state IS NULL OR state = CAST(:state AS text))
+        ORDER BY
+            CASE
+                WHEN :useSalarySort = true THEN
+                    CASE
+                        WHEN salary IS NULL OR salary !~ '^[0-9]' THEN 2147483647
+                        ELSE CAST(substring(salary FROM '^[0-9]+') AS INTEGER)
+                    END
+                ELSE NULL
+            END DESC,
+            CASE WHEN :useSalarySort = false THEN
+                CASE :sortField
+                    WHEN 'company' THEN company
+                    WHEN 'salary' THEN salary
+                    WHEN 'publishedDate' THEN CAST(published_date AS TEXT)
+                END
+            END DESC,
+            id ASC
+        LIMIT :limit OFFSET :offset""", nativeQuery = true)
+    List<JobEntity> findJobsUniversalDesc(@Param("state") String state, @Param("sortField") String sortField, @Param("useSalarySort") boolean useSalarySort ,@Param("limit") int limit, @Param("offset") int offset);
 
     /**
      * Counts jobs by state.

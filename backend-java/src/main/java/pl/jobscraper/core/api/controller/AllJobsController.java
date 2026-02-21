@@ -10,6 +10,7 @@ import pl.jobscraper.core.api.dto.PageResponse;
 import pl.jobscraper.core.api.dto.SortField;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
 import pl.jobscraper.core.application.service.AllJobsService;
+import pl.jobscraper.core.domain.model.JobState;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.util.List;
@@ -34,6 +35,15 @@ public class AllJobsController {
             @RequestParam(defaultValue = "publishedDate") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder
     ) {
+
+        JobState jobState = null;
+        if (state != null &&  !state.isBlank()) {
+            try {
+                jobState = JobState.valueOf(state.toUpperCase());
+            }catch (IllegalArgumentException e) {
+            }
+        }
+
         String entitySortField;
         try {
             SortField sortField = SortField.valueOf(sortBy.toUpperCase().replace("_", ""));
@@ -47,7 +57,7 @@ public class AllJobsController {
         List<JobEntity> entities = allJobsService.fetchPaginated(
                 page,
                 size,
-                state,
+                jobState,
                 entitySortField,
                 validatedSortOrder
         );

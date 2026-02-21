@@ -2,7 +2,6 @@ package pl.jobscraper.core.infrastructure.persistence.repository;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
 import pl.jobscraper.core.application.dto.JobFilter;
@@ -432,19 +431,28 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<JobEntity> fetchAllPaginated(int page, int size, String state, String sortBy, String sortOrder) {
+    public List<JobEntity> fetchAllPaginated(int page, int size, JobState state, String sortBy, String sortOrder) {
 
-        Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Sort sort = Sort.by(direction, sortBy);
+        int offset = (page) * size;
+        boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
+        boolean useSalarySort = "salary".equals(sortBy);
+        String dbSortField = mapToDbColumn(sortBy);
+        String stateString = (state!=null) ? state.name() : null;
 
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        if (state != null) {
-            return jpaRepository.findAllJobsByStatePaginated(state, pageable).getContent();
-        }else {
-            return jpaRepository.findAllJobsPaginated(pageable).getContent();
+        if (isAsc){
+            return jpaRepository.findJobsUniversalAsc(stateString,dbSortField,useSalarySort,size,offset);
+        }else{
+            return jpaRepository.findJobsUniversalDesc(stateString,dbSortField,useSalarySort,size,offset);
         }
+    }
+
+    private String mapToDbColumn(String javaField) {
+        return switch (javaField){
+            case "publishedDate" -> "publishedDate";
+            case "company" -> "company";
+            case  "salary" -> "salary";
+            default -> javaField;
+        };
     }
 
     @Override

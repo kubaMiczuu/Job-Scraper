@@ -9,7 +9,6 @@ package pl.jobscraper.core.api.dto;
 public enum SortField {
 
     PUBLISHED_DATE("publishedDate"),
-    TITLE("title"),
     COMPANY("company"),
     SALARY("salary");
 
