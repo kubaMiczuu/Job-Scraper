@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/frontend-react/frontend-react.iml" filepath="$PROJECT_DIR$/frontend-react/frontend-react.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend-java/job-scraper-core.iml" filepath="$PROJECT_DIR$/backend-java/job-scraper-core.iml" />
     </modules>
   </component>
 </project>

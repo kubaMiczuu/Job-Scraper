@@ -1,5 +1,8 @@
 package pl.jobscraper.core.application.service;
 
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import pl.jobscraper.core.application.dto.JobFilter;
 import pl.jobscraper.core.infrastructure.notifier.INotifier;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -47,6 +50,10 @@ public class NotificationService {
      * @throws IOException          If an I/O error occurs during data retrieval or sending.
      * @throws InterruptedException If the process is interrupted during execution.
      */
+    @Retryable(
+            backoff = @Backoff(delay = 5000),
+            recover = "recoverNotificationCycle"
+    )
     public void runNotificationCycle() throws IOException, InterruptedException {
         List<JobEntity> jobs = provider.getNewJobs(JobFilter.none());
 
@@ -55,16 +62,28 @@ public class NotificationService {
             return;
         }
 
-        logger.info("Found {} new jobs", jobs.size());
+        logger.info("Found {} new jobs, sending notifications", jobs.size());
 
         boolean consumed = false;
 
         for(INotifier notifier : notifiers) {
-            boolean sent = notifier.send(jobs);
+            try {
+                boolean sent = notifier.send(jobs);
 
-            if(sent) consumed = true;
+                if (sent) consumed = true;
+            } catch (Exception e) {
+                logger.error("Notifier {} failed: {}", notifier.getClass().getSimpleName(), e.getMessage());
+                throw e;
+            }
         }
 
         if(consumed) provider.makeConsumedNotifications(jobs);
+    }
+
+    @Recover
+    public void recoverNotificationCycle(IOException e) {
+        logger.error("CRITICAL: All retry attempts failed for notification service.");
+        logger.error("Exception type: {}", e.getClass().getSimpleName());
+        logger.error("Exception message: {}", e.getMessage());
     }
 }
