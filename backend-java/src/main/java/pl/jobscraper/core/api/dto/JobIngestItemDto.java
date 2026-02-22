@@ -11,37 +11,11 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * DTO for single job posting in ingest request.
+ * Inbound job posting payload for batch ingestion.
  * <p>
- * Represents one job in the batch sent by scraper via POST /api/jobs.
- * This is the API contract - changes to fields require API versioning.
- *
- * <p><strong>Validation:</strong>
- * Required fields are validated using Jakarta Bean Validation annotations.
- * Controller uses {@code @Valid} to trigger validation before processing.
- *
- * <p><strong>Example JSON:</strong>
- * <pre>{@code
- * {
- *   "title": "Senior Java Developer",
- *   "company": "Google",
- *   "location": "Warsaw, Poland",
- *   "url": "https://google.com/careers/123",
- *   "publishedDate": "2026-02-03T10:00:00Z",
- *   "source": "LinkedIn",
- *   "seniority": "SENIOR",
- *   "employmentType": "UOP",
- *   "techKeywords": ["java", "spring", "postgresql"],
- *   "salary": "15000-20000 PLN",
- *   "descriptionSnippet": "We are looking for..."
- * }
- * }</pre>
- *
- * <p><strong>DTO vs Domain:</strong>
- * This is an API DTO (data transfer object), NOT domain model.
- * Mapper converts: JobIngestItemDto → Job (domain).
- *
- * @see pl.jobscraper.core.domain.model.Job
+ * This DTO defines the external API contract for scrapers.
+ * Constraints are enforced via Jakarta Bean Validation.
+ * * @see pl.jobscraper.core.domain.model.Job
  */
 public record JobIngestItemDto(
 

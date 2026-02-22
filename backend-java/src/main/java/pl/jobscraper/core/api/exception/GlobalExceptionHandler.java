@@ -17,22 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Global exception handler for REST API.
- * <p>
- * Catches exceptions thrown by controllers and converts them
- * to consistent JSON error responses.
- *
- * <p><strong>Handled exceptions:</strong>
- * <ul>
- *   <li>MethodArgumentNotValidException - validation errors (400)</li>
- *   <li>IllegalArgumentException - bad arguments (400)</li>
- *   <li>MethodArgumentTypeMismatchException - type conversion (400)</li>
- *   <li>Exception - all other errors (500)</li>
- * </ul>
- *
- * <p><strong>Response format:</strong>
- * All errors return ErrorResponse DTO with consistent structure:
- * timestamp, status, error, message, path, details (optional)
+ * Global entry point for API error handling.
+ * <p>Ensures every exception is translated into a standardized {@link ErrorResponse}
+ * to maintain a consistent contract for all consumers (scrapers, notifiers, UI).
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -87,18 +74,6 @@ public class GlobalExceptionHandler {
      * <p>
      * Triggered when @Valid annotation fails on request DTO.
      *
-     * <p><strong>Example:</strong>
-     * <pre>{@code
-     * POST /api/jobs with empty title
-     * → 400 Bad Request
-     * {
-     *   "status": 400,
-     *   "error": "Validation Failed",
-     *   "message": "Invalid request body",
-     *   "details": ["title: must not be blank"]
-     * }
-     * }</pre>
-     *
      * @param ex      validation exception
      * @param request HTTP request
      * @return 400 Bad Request with validation details
@@ -134,17 +109,6 @@ public class GlobalExceptionHandler {
      * <p>
      * Triggered by service layer validation.
      *
-     * <p><strong>Example:</strong>
-     * <pre>{@code
-     * POST /mark-consumed with empty IDs list
-     * → 400 Bad Request
-     * {
-     *   "status": 400,
-     *   "error": "Bad Request",
-     *   "message": "IDs list cannot be null or empty"
-     * }
-     * }</pre>
-     *
      * @param ex      illegal argument exception
      * @param request HTTP request
      * @return 400 Bad Request with error message
@@ -168,17 +132,6 @@ public class GlobalExceptionHandler {
      * Handles type conversion errors (query params, path variables).
      * <p>
      * Triggered when parameter type doesn't match expected type.
-     *
-     * <p><strong>Example:</strong>
-     * <pre>{@code
-     * GET /api/jobs/all?page=abc
-     * → 400 Bad Request
-     * {
-     *   "status": 400,
-     *   "error": "Bad Request",
-     *   "message": "Invalid parameter 'page': expected type Integer"
-     * }
-     * }</pre>
      *
      * @param ex      type mismatch exception
      * @param request HTTP request
@@ -210,17 +163,6 @@ public class GlobalExceptionHandler {
      * Handles all other uncaught exceptions.
      * <p>
      * Catches unexpected errors (database down, NPE, etc.).
-     *
-     * <p><strong>Example:</strong>
-     * <pre>{@code
-     * GET /api/jobs/all (database down)
-     * → 500 Internal Server Error
-     * {
-     *   "status": 500,
-     *   "error": "Internal Server Error",
-     *   "message": "An unexpected error occurred"
-     * }
-     * }</pre>
      *
      * @param ex      any exception
      * @param request HTTP request

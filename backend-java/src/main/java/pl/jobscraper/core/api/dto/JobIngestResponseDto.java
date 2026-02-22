@@ -3,50 +3,10 @@ package pl.jobscraper.core.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * DTO for ingest operation response.
+ * Statistics for a completed job ingestion batch.
  * <p>
- * Contains aggregated statistics about processed batch.
- * Returned by POST /api/jobs endpoint.
- *
- * <p><strong>Example JSON response:</strong>
- * <pre>{@code
- * {
- *   "received": 150,
- *   "insertedNew": 45,
- *   "updatedExisting": 95,
- *   "skippedDuplicates": 10
- * }
- * }</pre>
- *
- * <p><strong>Invariant:</strong>
- * {@code received = insertedNew + updatedExisting + skippedDuplicates}
- *
- * <p><strong>Field meanings:</strong>
- * <ul>
- *   <li><strong>received:</strong> Total jobs in batch (including duplicates)</li>
- *   <li><strong>insertedNew:</strong> How many new jobs inserted (state=NEW)</li>
- *   <li><strong>updatedExisting:</strong> How many existing jobs updated (state unchanged)</li>
- *   <li><strong>skippedDuplicates:</strong> How many duplicates within batch</li>
- * </ul>
- *
- * <p><strong>Idempotency example:</strong>
- * <pre>{@code
- * // First call: ingest([jobA, jobB])
- * {
- *   "received": 2,
- *   "insertedNew": 2,
- *   "updatedExisting": 0,
- *   "skippedDuplicates": 0
- * }
- *
- * // Second call: ingest([jobA, jobB]) - same batch
- * {
- *   "received": 2,
- *   "insertedNew": 0,
- *   "updatedExisting": 2,  // Jobs already exist
- *   "skippedDuplicates": 0
- * }
- * }</pre>
+ * Provides a breakdown of processing results for audit and monitoring.
+ * The invariant {@code received == insertedNew + updatedExisting + skippedDuplicates} must hold.
  *
  * @param received total jobs in batch
  * @param insertedNew count of newly inserted jobs
@@ -67,4 +27,12 @@ public record JobIngestResponseDto(
         @JsonProperty("skippedDuplicates")
         int skippedDuplicates
 ) {
+        /**
+         * Internal integrity check for the ingestion summary.
+         */
+        public JobIngestResponseDto {
+                if (received != (insertedNew + updatedExisting + skippedDuplicates)) {
+                        throw new IllegalStateException("Ingestion statistics mismatch: " + received + " total != sum of parts");
+                }
+        }
 }

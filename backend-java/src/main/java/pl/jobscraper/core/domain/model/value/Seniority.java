@@ -3,52 +3,36 @@ package pl.jobscraper.core.domain.model.value;
 import pl.jobscraper.core.domain.model.Job;
 
 /**
- * Job seniority/experience levels.
+ * Standardized job seniority levels.
  * <p>
- * This enum represents the required experience level fo a job posting.
- * It is an optional field in {@link pl.jobscraper.core.domain.model.Job}.
- *
- * <p><strong>Typical mappings from job descriptions:</strong>
- * <ul>
- *     <li>JUNIOR: 0-2 years experience, entry-level, trainee</li>
- *     <li>MID: 2-5 years experience, intermediate, regular</li>
- *     <li>SENIOR: 5+ years experience, expert, advanced</li>
- *     <li>LEAD: Team led, tech lead, principal, staff engineer</li>
- * </ul>
- *
- * <p><strong>Usage in filtering:</strong>
- * Seniority can be used as a filter in {@code GET /api/jobs/new?seniority=SENIOR}
- * to return only jobs matching specified experience level.
+ * Categorizes experience requirements into discrete tiers to enable
+ * consistent filtering and notification matching across different job sources.
  *
  * @see Job#getSeniority()
  */
 public enum Seniority {
     /**
-     * Junior level (0-2 years experience).
-     * <p>
-     * Typically trainee, intern, junior developer, entry-level.
+     * Entry-level positions, trainees, and early-career developers.
      */
     JUNIOR,
 
     /**
-     * Mid-level (2-5 years experience).
-     * <p>
-     * Typically: regular developer, intermediate, mid-level.
+     * Regular, intermediate positions for independent contributors.
      */
     MID,
 
     /**
-     * Senior level (5+ years experience).
-     * <p>
-     * Typically: senior developer, expert, advanced, specialist.
+     * Advanced positions requiring deep technical expertise and autonomy.
      */
     SENIOR,
 
     /**
-     * Lead level (team leadership).
-     * <p>
-     * Typically: tech lead, team lead, principal engineer, staff engineer,
-     * engineering manager (with hands-on coding).
+     * Technical leadership, mentoring, and team-level accountability.
      */
-    LEAD, EXPERT
+    LEAD,
+
+    /**
+     * Expert or Principal positions focusing on deep specialization or architectural impact.
+     */
+    EXPERT
 }

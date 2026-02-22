@@ -4,27 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
- * Response DTO for mark-consumed operation.
- * <p>
- * Contains statistics about how many jobs were marked as CONSUMED.
- *
- * <p><strong>Example JSON:</strong>
- * <pre>{@code
- * {
- *   "requested": 5,
- *   "marked": 3,
- *   "alreadyConsumed": 1,
- *   "notFound": 1
- * }
- * }</pre>
- *
- * <p><strong>Field meanings:</strong>
- * <ul>
- *   <li>requested: total IDs in request</li>
- *   <li>marked: how many NEW → CONSUMED transitions</li>
- *   <li>alreadyConsumed: how many were already CONSUMED (idempotent)</li>
- *   <li>notFound: how many IDs don't exist in database</li>
- * </ul>
+ * Summary of the job consumption process.
+ * * <p>Ensures full traceability by breaking down the status of all requested IDs.
+ * The invariant {@code requested == marked + alreadyConsumed + notFound} is enforced at construction.
  *
  * @param requested      total IDs requested
  * @param marked         count of NEW → CONSUMED transitions

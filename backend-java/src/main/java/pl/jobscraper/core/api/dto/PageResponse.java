@@ -6,25 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * Generic paginated response wrapper.
+ * Generic container for paginated data.
  * <p>
- * Wraps paginated content with metadata about current page,
- * total elements, and navigation info.
+ * Standardizes how collections are returned across the API, providing
+ * essential navigation metadata for clients.
  *
- * <p><strong>Example JSON:</strong>
- * <pre>{@code
- * {
- *   "content": [...],
- *   "page": 0,
- *   "size": 20,
- *   "totalElements": 150,
- *   "totalPages": 8,
- *   "hasNext": true,
- *   "hasPrevious": false
- * }
- * }</pre>
- *
- * @param <T> type of content items
+ * @param <T> The type of the resource being paginated.
  */
 public record PageResponse<T>(
         List<T> content,

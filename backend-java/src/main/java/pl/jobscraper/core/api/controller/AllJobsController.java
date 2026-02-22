@@ -16,6 +16,10 @@ import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.util.List;
 
+/**
+ * REST controller exposing job listing endpoints.
+ * Supports pagination, filtering, and sorting.
+ */
 @RestController
 @RequestMapping("/api/jobs")
 public class AllJobsController {
@@ -29,45 +33,18 @@ public class AllJobsController {
     }
 
     /**
-     * Fetches paginated list of jobs with sorting.
+     * Retrieves a paginated list of jobs.
+     * Supports optional filtering and sorting.
      *
-     * <p><strong>Query parameters:</strong>
-     * <ul>
-     *   <li>page: page number, 0-based (default 0)</li>
-     *   <li>size: items per page (default 20)</li>
-     *   <li>seniority: filter by seniority - NEW, CONSUMED, STALE (optional)</li>
-     *   <li>sort: format "field,direction" (default "publishedDate,desc")</li>
-     * </ul>
+     * @param page zero-based page index (default: 0)
+     * @param size page size (default: 20)
+     * @param seniority optional filter
+     * @param employmentType optional filter
+     * @param location optional filter
+     * @param source optional filter
+     * @param sort sorting in format: field,direction (default: publishedDate,desc)
      *
-     * <p><strong>Sort fields:</strong>
-     * publishedDate, title, company, location, salary, createdAt
-     *
-     * <p><strong>Sort directions:</strong>
-     * asc (ascending), desc (descending)
-     *
-     * <p><strong>Examples:</strong>
-     * <pre>{@code
-     * # Default (newest first):
-     * GET /api/jobs/all
-     *
-     * # Company A-Z:
-     * GET /api/jobs/all?sort=company,asc
-     *
-     * # Highest salary first:
-     * GET /api/jobs/all?sort=salary,desc
-     *
-     * # NEW jobs, sorted by title:
-     * GET /api/jobs/all?seniority=NEW&sort=title,asc
-     *
-     * # Page 2, 10 items, sorted by location:
-     * GET /api/jobs/all?page=1&size=10&sort=location,asc
-     * }</pre>
-     *
-     * @param page  page number, 0-based (default 0)
-     * @param size  items per page (default 20)
-     * @param seniority optional seniority filter (NEW, CONSUMED, STALE)
-     * @param sort  sort parameter: "field,direction" (default "publishedDate,desc")
-     * @return paginated response with metadata
+     * @return paginated list of jobs
      */
     @GetMapping("/all")
     public ResponseEntity<PageResponse<JobViewDto>> getAllJobs(

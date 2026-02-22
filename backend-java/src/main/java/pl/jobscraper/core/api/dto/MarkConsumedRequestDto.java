@@ -6,23 +6,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * DTO for mark-consumed request.
+ * Request payload to acknowledge job processing.
  * <p>
- * Contains list of job IDs that Notifier has successfully processed.
- *
- * <p><strong>Example JSON request:</strong>
- * <pre>{@code
- * {
- *   "ids": [
- *     "a1b2c3d4-5678-90ab-cdef-123456789abc",
- *     "e5f6g7h8-1234-56cd-78ef-abcdef123456"
- *   ]
- * }
- * }</pre>
- *
- * <p><strong>Validation:</strong>
- * List must not be empty (at least 1 ID required).
- *
+ * Signals that the specified jobs have been successfully handled by the downstream consumer.
  * @param ids list of job IDs to mark as consumed (not empty)
  */
 public record MarkConsumedRequestDto(

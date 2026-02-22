@@ -8,24 +8,8 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * Standardized error response DTO.
- * <p>
- * Returned for all errors (4xx, 5xx) with consistent structure.
- *
- * <p><strong>Example JSON:</strong>
- * <pre>{@code
- * {
- *   "timestamp": "2026-02-17T14:30:00Z",
- *   "status": 400,
- *   "error": "Bad Request",
- *   "message": "Validation failed",
- *   "path": "/api/jobs",
- *   "details": [
- *     "title: must not be blank",
- *     "company: must not be blank"
- *   ]
- * }
- * }</pre>
+ * Global API error representation.
+ * <p>Provides a consistent structure for all 4xx and 5xx responses across the system.
  *
  * @param timestamp when error occurred (ISO-8601)
  * @param status    HTTP status code (400, 404, 500, etc.)

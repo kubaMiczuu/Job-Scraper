@@ -13,51 +13,9 @@ import java.util.List;
 
 
 /**
- * REST controller for fetching NEW jobs queue.
- * <p>
- * Handles GET /api/jobs/new endpoint - returns NEW jobs for Notifier
- * in deterministic FIFO order.
- *
- * <p><strong>Endpoint:</strong>
- * <pre>
- * GET /api/jobs/new?limit=100
- *
- * Response: List of JobViewDto (NEW jobs, oldest first)
- * </pre>
- *
- * <p><strong>Example request:</strong>
- * <pre>{@code
- * GET http://localhost:8080/api/jobs/new?limit=100
- * }</pre>
- *
- * <p><strong>Example response:</strong>
- * <pre>{@code
- * HTTP/1.1 200 OK
- * Content-Type: application/json
- *
- * [
- *   {
- *     "id": "a1b2c3d4-...",
- *     "title": "Senior Java Developer",
- *     "company": "Google",
- *     "location": "Warsaw, Poland",
- *     "url": "https://google.com/careers/123",
- *     "publishedDate": "2026-02-03T10:00:00Z",
- *     "enteredNewAt": "2026-02-03T10:15:30Z",
- *     ...
- *   },
- *   ...
- * ]
- * }</pre>
- *
- * <p><strong>Query parameters:</strong>
- * <ul>
- *   <li>limit: max number of jobs (default 100, typical batch size for Notifier)</li>
- * </ul>
- *
- * <p><strong>Read-only operation:</strong>
- * This endpoint does NOT change job state. Jobs remain in NEW state.
- * Notifier must call POST /api/jobs/mark-consumed to mark as processed.
+ * REST controller for retrieving NEW jobs.
+ * Provides read-only access to the NEW jobs queue
+ * with optional filtering and pagination.
  *
  * @see NewJobsService
  * @see JobViewDto

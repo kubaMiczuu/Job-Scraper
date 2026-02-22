@@ -13,22 +13,6 @@ import pl.jobscraper.core.domain.model.Job;
  * <p><strong>Responsibility:</strong>
  * Pure conversion - copies fields from DTO to domain object.
  * No validation, no calculations, no business decisions.
- *
- * <p><strong>Usage:</strong>
- * <pre>{@code
- * @RestController
- * public class JobIngestController {
- *     private final ApiToDomainMapper mapper;
- *
- *     @PostMapping("/api/jobs")
- *     public ResponseEntity<?> ingest(@RequestBody List<JobIngestItemDto> dtos) {
- *         List<Job> jobs = dtos.stream()
- *             .map(mapper::toDomain)
- *             .toList();
- *         // ...
- *     }
- * }
- * }</pre>
  */
 @Component
 public class ApiToDomainMapper {

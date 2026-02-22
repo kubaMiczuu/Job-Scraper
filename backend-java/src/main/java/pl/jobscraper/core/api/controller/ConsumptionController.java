@@ -7,6 +7,10 @@ import pl.jobscraper.core.api.dto.MarkConsumedRequestDto;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
 import pl.jobscraper.core.application.service.ConsumptionService;
 
+/**
+ * REST controller for job consumption operations.
+ * Provides endpoints for updating job consumption status.
+ */
 @RestController
 @RequestMapping("/api/jobs")
 public class ConsumptionController {
@@ -19,6 +23,13 @@ public class ConsumptionController {
         this.mapper = mapper;
     }
 
+    /**
+     * Marks selected jobs as consumed.
+     *
+     * @param dto request containing job IDs to mark as consumed
+     *
+     * @return result summary with processed items
+     */
     @PostMapping("/mark-consumed")
     public ResponseEntity<ConsumedResponseDto> markConsumed(@Valid @RequestBody MarkConsumedRequestDto dto) {
 

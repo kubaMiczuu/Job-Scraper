@@ -5,27 +5,12 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
- * Represents unique identity of a job posting (Value Object)
+ * Unique identifier for a job posting.
  * <p>
- * This class is the foundation of the deduplication system. Each job posting
- * has exactly ONE identity, determined by either:
- * <ul>
- *     <li><strong>Canonical URL</strong> - normalized, tracker-free URL (preferred)</li>
- *     <li><string>Fallback hash</string> - SHA-256 hash of company+title_location (when URL invalid)</li>
- * </ul>
- *
- * <p><strong>XOR Invariant:</strong> Exactly one field must be non-null
- * This is enforced at construction time and cannot be violated.
- *
- * <p><strong>Immutability:</strong> Once created, identity cannot be changed.
- * All fields are final and there are no setters.
- *
- * <p><strong>Equality:</strong>
- * <ul>
- *     <li>Two URL-based identities are equal if URLs match</li>
- *     <li>Two hash-based identities are equal if hashes match</li>
- *     <li>URL-based and hash-based identities are NEVER equal (different identity types)</li>
- * </ul>
+ * Enforces a strict XOR invariant: an identity is either URL-based (preferred)
+ * or Content-Hash-based (fallback).
+ * <p>This object is immutable and thread-safe, serving as the primary key
+ * for deduplication logic.
  * 
  * @see JobIdentityCalculator
  * @see NormalizationRules#canonicalUrl(String) 
@@ -159,12 +144,10 @@ public final class JobIdentity {
             return false;
         }
 
-        // Both URL-based: compare URls
         if(that.isUrlBased()){
             return Objects.equals(this.canonicalUrl, that.canonicalUrl);
         }
 
-        // Both hash-based: compare hashes
         return Objects.equals(this.fallbackHash, that.fallbackHash);
     }
 
