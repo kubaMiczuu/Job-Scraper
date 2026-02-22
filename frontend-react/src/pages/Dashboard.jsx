@@ -46,9 +46,9 @@ const Dashboard = () => {
 
             const response = jobsApi.fetchJobs({
                 page: currentPage,
-                size: itemsPerPage,/**
+                size: itemsPerPage,
                 ...appliedFilters,
-                searchTerm: debouncedSearchTerm,*/
+                searchTerm: debouncedSearchTerm,
                 sort: sortBy
             });
 
@@ -77,7 +77,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchJobs();
-    }, [currentPage, itemsPerPage,/** appliedFilters, debouncedSearchTerm,*/ sortBy]);
+    }, [currentPage, itemsPerPage, appliedFilters, debouncedSearchTerm, sortBy]);
 
     const toggleTheme = () => {
         const newTheme = theme === "dark" ? "light" : "dark";

@@ -5,12 +5,12 @@ export const jobsApi = {
     async fetchJobs(params = {}) {
         const {
             page = 1,
-            size = 12,/**
+            size = 12,
             seniority = [],
             employmentType = [],
             location = [],
             source = [],
-            searchTerm = '',*/
+            searchTerm = '',
             sort = 'publishedDate,desc'
         } = params;
 
@@ -18,7 +18,7 @@ export const jobsApi = {
         queryParams.append('page', page-1);
         queryParams.append('size', size);
 
-        /**seniority.forEach(seniority => queryParams.append('seniority', seniority));
+        seniority.forEach(seniority => queryParams.append('seniority', seniority));
         employmentType.forEach(employmentType => queryParams.append('employmentType', employmentType));
         location.forEach(location => queryParams.append('location', location));
         source.forEach(source => queryParams.append('source', source));
@@ -26,7 +26,7 @@ export const jobsApi = {
         if(searchTerm) {
             queryParams.append('searchTerm', searchTerm);
         }
-         */
+
 
         queryParams.append('sort',sort);
 

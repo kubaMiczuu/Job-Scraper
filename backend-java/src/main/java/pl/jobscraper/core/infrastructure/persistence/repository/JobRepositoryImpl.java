@@ -458,7 +458,7 @@ public class JobRepositoryImpl implements JobRepository {
         String[] employmentTypeParams = (employmentTypes!=null && employmentTypes.length>0)
                 ? Arrays.stream(employmentTypes).map(Enum::name).toArray(String[]::new) : null;
         String[] locationParams = (locations !=null && locations.length>0)
-                ? locations : null;
+                ? Arrays.stream(locations).map(loc -> "%" + loc.trim() + "%").toArray(String[]::new) : null;
         String[] sourceParams = (sources !=null && sources.length>0)
                 ? sources : null;
 
@@ -495,8 +495,10 @@ public class JobRepositoryImpl implements JobRepository {
 
             String[] sParams = (seniorities !=null) ? Arrays.stream(seniorities).map(Enum::name).toArray(String[]::new) : null;
             String[] eParams = (employmentTypes !=null) ? Arrays.stream(employmentTypes).map(Enum::name).toArray(String[]::new) : null;
+            String[] locPatterns = (locations != null && locations.length>0)
+                    ? Arrays.stream(locations).map(loc -> "%" + loc.trim() + "%").toArray(String[]::new) : null;
 
-            return jpaRepository.countWithFilters(sParams, eParams,locations,sources);
+            return jpaRepository.countWithFilters(sParams, eParams,locPatterns,sources);
         }
     }
 

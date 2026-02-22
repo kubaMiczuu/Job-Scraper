@@ -206,7 +206,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
         WHERE 1=1
             AND (COALESCE(ARRAY_LENGTH(CAST(:seniorities AS TEXT[]),1),0) = 0 OR seniority = ANY(CAST(:seniorities AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
-            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location = ANY(CAST(:locations AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location ILIKE ANY(CAST(:locations AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
         ORDER BY
             CASE
@@ -240,7 +240,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
         WHERE 1=1
             AND (COALESCE(ARRAY_LENGTH(CAST(:seniorities AS TEXT[]),1),0) = 0 OR seniority = ANY(CAST(:seniorities AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
-            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location = ANY(CAST(:locations AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location ILIKE ANY(CAST(:locations AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
         ORDER BY
             CASE
@@ -283,7 +283,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
         WHERE 1=1
             AND (COALESCE(ARRAY_LENGTH(CAST(:seniorities AS TEXT[]),1),0) = 0 OR seniority = ANY(CAST(:seniorities AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
-            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location = ANY(CAST(:locations AS TEXT[])))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location ILIKE ANY(CAST(:locations AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
    \s""", nativeQuery = true)
     long countWithFilters(
