@@ -24,7 +24,8 @@ public record PageResponse<T>(
         @JsonProperty("hasNext")
         boolean hasNext,
         @JsonProperty("hasPrevious")
-        boolean hasPrevious
+        boolean hasPrevious,
+        FiltersResponseDto filters
 
 ) {
     /**
@@ -36,7 +37,7 @@ public record PageResponse<T>(
      * @param totalElements total elements count
      * @return PageResponse with calculated metadata
      */
-    public static  <T> PageResponse<T> of(List<T> content, int page, int size, long totalElements){
+    public static  <T> PageResponse<T> of(List<T> content, int page, int size, long totalElements, FiltersResponseDto filters) {
         int totalPages = size>0 ? (int)Math.ceil((double)totalElements / size) : 0;
         boolean hasNext = page < totalPages-1;
         boolean hasPrevious = page > 0;
@@ -48,7 +49,8 @@ public record PageResponse<T>(
                 totalElements,
                 totalPages,
                 hasNext,
-                hasPrevious
+                hasPrevious,
+                filters
         );
     }
 }

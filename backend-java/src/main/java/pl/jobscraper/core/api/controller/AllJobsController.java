@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pl.jobscraper.core.api.dto.FiltersResponseDto;
 import pl.jobscraper.core.api.dto.JobViewDto;
 import pl.jobscraper.core.api.dto.PageResponse;
 import pl.jobscraper.core.api.dto.SortField;
 import pl.jobscraper.core.api.mapper.DomainToApiMapper;
 import pl.jobscraper.core.application.service.AllJobsService;
+import pl.jobscraper.core.application.service.FiltersService;
 import pl.jobscraper.core.domain.model.value.EmploymentType;
 import pl.jobscraper.core.domain.model.value.Seniority;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
@@ -26,10 +28,12 @@ public class AllJobsController {
 
     private final AllJobsService allJobsService;
     private final DomainToApiMapper mapper;
+    private final FiltersService filtersService;
 
-    public AllJobsController(AllJobsService allJobsService, DomainToApiMapper mapper) {
+    public AllJobsController(AllJobsService allJobsService, DomainToApiMapper mapper, FiltersService filtersService) {
         this.allJobsService = allJobsService;
         this.mapper = mapper;
+        this.filtersService = filtersService;
     }
 
     /**
@@ -86,11 +90,24 @@ public class AllJobsController {
 
         List<JobViewDto> dtos = entities.stream().map(mapper::toViewDto).toList();
 
+        List<String> seniorities = filtersService.getAvailableSeniorities();
+        List<String> employmentTypes = filtersService.getAvailableEmploymentTypes();
+        List<String> locations = filtersService.getAvailableLocations();
+        List<String> sources = filtersService.getDistinctSources();
+
+        FiltersResponseDto filters = new FiltersResponseDto(
+                seniorities,
+                employmentTypes,
+                locations,
+                sources
+        );
+
         PageResponse<JobViewDto> response = PageResponse.of(
                 dtos,
                 page,
                 size,
-                totalElements
+                totalElements,
+                filters
         );
         return ResponseEntity.ok(response);
     }

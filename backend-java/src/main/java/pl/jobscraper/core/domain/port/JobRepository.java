@@ -128,4 +128,13 @@ public interface JobRepository {
      * @return total count
      */
     long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources);
+
+    List<String> findDistinctSeniorities();
+
+    List<String> findDistinctEmploymentTypes();
+
+    List<String> findDistinctLocations();
+
+    List<String> findDistinctSources();
+
 }

@@ -214,4 +214,17 @@ public class JobRepositoryImpl implements JobRepository {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findDistinctSeniorities() {return jpaRepository.findDistinctSeniorities();}
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findDistinctEmploymentTypes() {return jpaRepository.findDistinctEmploymentTypes();}
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findDistinctLocations() {return jpaRepository.findDistinctLocations();}
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findDistinctSources() {return jpaRepository.findDistinctSources();}
+
 }

@@ -109,7 +109,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             CASE
                 WHEN :useSalarySort = true THEN
                     CASE
-                        WHEN salary IS NULL OR salary !~ '^[0-9]' THEN 2147483647
+                        WHEN salary IS NULL OR salary !~ '^[0-9]' THEN 0
                         ELSE CAST(substring(salary FROM '^[0-9]+') AS INTEGER)
                     END
                 ELSE NULL
@@ -143,7 +143,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             CASE
                 WHEN :useSalarySort = true THEN
                     CASE
-                        WHEN salary IS NULL OR salary !~ '^[0-9]' THEN 2147483647
+                        WHEN salary IS NULL OR salary !~ '^[0-9]' THEN 0
                         ELSE CAST(substring(salary FROM '^[0-9]+') AS INTEGER)
                     END
                 ELSE NULL
@@ -189,4 +189,32 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             @Param("locations") String[] locations,
             @Param("sources") String[] sources
     );
+
+    @Query(value = """
+        SELECT DISTINCT seniority FROM jobs
+        WHERE seniority IS NOT NULL
+        ORDER BY seniority ASC
+    """, nativeQuery = true)
+    List<String> findDistinctSeniorities();
+
+    @Query(value = """
+        SELECT DISTINCT employment_type FROM jobs
+        WHERE employment_type IS NOT NULL
+        ORDER BY employment_type ASC
+    """, nativeQuery = true)
+    List<String> findDistinctEmploymentTypes();
+
+    @Query(value = """
+        SELECT DISTINCT location FROM jobs
+        WHERE location IS NOT NULL
+        ORDER BY location ASC
+    """, nativeQuery = true)
+    List<String> findDistinctLocations();
+
+    @Query(value = """
+        SELECT DISTINCT source FROM jobs
+        WHERE source IS NOT NULL
+        ORDER BY source ASC
+    """, nativeQuery = true)
+    List<String> findDistinctSources();
 }
