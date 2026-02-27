@@ -159,7 +159,7 @@ public class JobRepositoryImpl implements JobRepository {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String sortBy, String sortOrder) {
+    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords,String sortBy, String sortOrder) {
 
         int offset = (page) * size;
         boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
@@ -173,11 +173,13 @@ public class JobRepositoryImpl implements JobRepository {
                 ? Arrays.stream(locations).map(loc -> "%" + loc.trim() + "%").toArray(String[]::new) : null;
         String[] sourceParams = (sources !=null && sources.length>0)
                 ? sources : null;
+        String[] keywordParams = (keywords != null && keywords.length>0)
+                ? keywords : null;
 
         if (isAsc){
-            return jpaRepository.findJobsUniversalAsc(seniorityParams,employmentTypeParams,locationParams,sourceParams,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalAsc(seniorityParams,employmentTypeParams,locationParams,sourceParams, keywordParams, dbSortField,useSalarySort,size,offset);
         }else{
-            return jpaRepository.findJobsUniversalDesc(seniorityParams,employmentTypeParams,locationParams,sourceParams,dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalDesc(seniorityParams,employmentTypeParams,locationParams,sourceParams, keywordParams, dbSortField,useSalarySort,size,offset);
         }
     }
 
@@ -194,7 +196,7 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources) {
+    public long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords) {
 
         boolean hasFilters = (seniorities != null && seniorities.length > 0) ||
                 (employmentTypes != null && employmentTypes.length > 0) ||
@@ -210,7 +212,7 @@ public class JobRepositoryImpl implements JobRepository {
             String[] locPatterns = (locations != null && locations.length>0)
                     ? Arrays.stream(locations).map(loc -> "%" + loc.trim() + "%").toArray(String[]::new) : null;
 
-            return jpaRepository.countWithFilters(sParams, eParams,locPatterns,sources);
+            return jpaRepository.countWithFilters(sParams, eParams,locPatterns,sources,keywords);
         }
     }
 

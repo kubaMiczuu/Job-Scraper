@@ -116,7 +116,7 @@ public interface JobRepository {
      * @param sortOrder sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
-    List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String sortBy, String sortOrder);
+    List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords, String sortBy, String sortOrder);
 
     /**
      * Counts all jobs (optionally filtered).
@@ -127,7 +127,7 @@ public interface JobRepository {
      * @param sources optional source filter
      * @return total count
      */
-    long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources);
+    long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords);
 
     List<String> findDistinctSeniorities();
 

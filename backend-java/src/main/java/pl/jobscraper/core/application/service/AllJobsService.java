@@ -32,8 +32,8 @@ public class AllJobsService {
      * @param sources optional source filter
      * @return list of entities for current page
      */
-    public List<JobEntity> fetchPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String sortBy, String sortOrder) {
-        return repository.fetchAllPaginated(page, size, seniorities, employmentTypes, locations, sources, sortBy, sortOrder);
+    public List<JobEntity> fetchPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords ,String sortBy, String sortOrder) {
+        return repository.fetchAllPaginated(page, size, seniorities, employmentTypes, locations, sources, keywords, sortBy, sortOrder);
     }
 
     /**
@@ -45,7 +45,7 @@ public class AllJobsService {
      * @param sources optional source filter
      * @return total count
      */
-    public long countTotal(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources) {
-        return repository.countAll(seniorities, employmentTypes, locations, sources);
+    public long countTotal(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords) {
+        return repository.countAll(seniorities, employmentTypes, locations, sources, keywords);
     }
 }
