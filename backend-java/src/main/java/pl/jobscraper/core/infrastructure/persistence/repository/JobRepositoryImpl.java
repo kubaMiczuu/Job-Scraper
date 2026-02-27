@@ -44,16 +44,18 @@ public class JobRepositoryImpl implements JobRepository {
     }
 
     @Override
-    public void saveNew(Job job, JobIdentity identity, Instant now) {
+    public void saveNew(Job job, JobIdentity identity, Instant now, String searchText) {
         JobEntity entity = mapper.toEntity(job, identity, JobState.NEW, now);
+        entity.setSearchText(searchText);
         jpaRepository.save(entity);
     }
 
     @Override
-    public void updateExisting(UUID id, Job job, Instant now) {
+    public void updateExisting(UUID id, Job job, Instant now, String searchText) {
         JobEntity entity = jpaRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Job not found with ID: " + id));
         mapper.updateEntityFromJob(entity, job);
         entity.setUpdatedAt(now);
+        entity.setSearchText(searchText);
         jpaRepository.save(entity);
     }
 
@@ -159,7 +161,7 @@ public class JobRepositoryImpl implements JobRepository {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords,String sortBy, String sortOrder) {
+    public List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] searchText,String sortBy, String sortOrder) {
 
         int offset = (page) * size;
         boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
@@ -173,13 +175,13 @@ public class JobRepositoryImpl implements JobRepository {
                 ? Arrays.stream(locations).map(loc -> "%" + loc.trim() + "%").toArray(String[]::new) : null;
         String[] sourceParams = (sources !=null && sources.length>0)
                 ? sources : null;
-        String[] keywordParams = (keywords != null && keywords.length>0)
-                ? keywords : null;
+        String[] searchTextParams = (searchText != null && searchText.length>0)
+                ? Arrays.stream(searchText).map(search -> "%" + search.trim() + "%").toArray(String[]::new) : null;
 
         if (isAsc){
-            return jpaRepository.findJobsUniversalAsc(seniorityParams,employmentTypeParams,locationParams,sourceParams, keywordParams, dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalAsc(seniorityParams,employmentTypeParams,locationParams,sourceParams, searchTextParams, dbSortField,useSalarySort,size,offset);
         }else{
-            return jpaRepository.findJobsUniversalDesc(seniorityParams,employmentTypeParams,locationParams,sourceParams, keywordParams, dbSortField,useSalarySort,size,offset);
+            return jpaRepository.findJobsUniversalDesc(seniorityParams,employmentTypeParams,locationParams,sourceParams, searchTextParams, dbSortField,useSalarySort,size,offset);
         }
     }
 
@@ -196,12 +198,13 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords) {
+    public long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] searchText) {
 
         boolean hasFilters = (seniorities != null && seniorities.length > 0) ||
                 (employmentTypes != null && employmentTypes.length > 0) ||
                 (locations != null && locations.length > 0) ||
-                (sources != null && sources.length > 0);
+                (sources != null && sources.length > 0) ||
+                (searchText!=null && searchText.length > 0);
 
         if (!hasFilters) {
             return jpaRepository.count();
@@ -211,8 +214,9 @@ public class JobRepositoryImpl implements JobRepository {
             String[] eParams = (employmentTypes !=null) ? Arrays.stream(employmentTypes).map(Enum::name).toArray(String[]::new) : null;
             String[] locPatterns = (locations != null && locations.length>0)
                     ? Arrays.stream(locations).map(loc -> "%" + loc.trim() + "%").toArray(String[]::new) : null;
-
-            return jpaRepository.countWithFilters(sParams, eParams,locPatterns,sources,keywords);
+            String[] searchPatterns = (searchText != null && searchText.length>0)
+                    ? Arrays.stream(searchText).map(search -> "%" + search.trim() + "%").toArray(String[]::new) : null;
+            return jpaRepository.countWithFilters(sParams, eParams,locPatterns,sources,searchPatterns);
         }
     }
 

@@ -30,9 +30,10 @@ public interface JobRepository {
      * @param job domain job (business data)
      * @param identity calculated job identity (URL or hash-based)
      * @param now current timestamp (from ClockPort) for all timestamp fields
+     * @param searchText searchable text for full-text search
      * @throws org.springframework.dao.DataIntegrityViolationException if duplicate identity (should not happen if caller checks first)
      */
-    void saveNew(Job job, JobIdentity identity, Instant now);
+    void saveNew(Job job, JobIdentity identity, Instant now, String searchText);
 
     /**
      * Updates business data for an existing job without affecting its current state.
@@ -40,9 +41,10 @@ public interface JobRepository {
      * @param id database ID of existing job
      * @param job updated domain job (source of new business field values)
      * @param now current timestamp (for updated_at)
+     * @param searchText updated searchable text
      * @throws IllegalArgumentException if job with given ID doesn't exist
      */
-    void updateExisting(UUID id, Job job, Instant now);
+    void updateExisting(UUID id, Job job, Instant now, String searchText);
 
     /**
      * Retrieves an existing job by its identity for deduplication purposes.
@@ -116,7 +118,7 @@ public interface JobRepository {
      * @param sortOrder sort direction (ASC/DESC)
      * @return list of JobEntity for current page
      */
-    List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords, String sortBy, String sortOrder);
+    List<JobEntity> fetchAllPaginated(int page, int size, Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] searchText, String sortBy, String sortOrder);
 
     /**
      * Counts all jobs (optionally filtered).
@@ -127,7 +129,7 @@ public interface JobRepository {
      * @param sources optional source filter
      * @return total count
      */
-    long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] keywords);
+    long countAll(Seniority[] seniorities, EmploymentType[] employmentTypes, String[] locations, String[] sources, String[] searchText);
 
     List<String> findDistinctSeniorities();
 

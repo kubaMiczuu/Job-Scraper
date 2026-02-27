@@ -92,7 +92,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @param employmentTypes optional employment filter
      * @param locations optional location filter
      * @param sources optional source filter
-     * @param keywords oprional keyword filter
+     * @param searchText oprional keyword filter
      * @param sortField  field to sort by (e.g., "company", "title", "published_date")
      * @param useSalarySort if true, uses numeric salary extraction; sortField is ignored
      * @param limit      max results
@@ -106,7 +106,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location ILIKE ANY(CAST(:locations AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
-            AND (COALESCE(ARRAY_LENGTH(CAST(:keywords AS TEXT[]),1),0) = 0 OR tech_keywords && CAST(:keywords AS TEXT[]))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:searchText AS TEXT[]),1),0) = 0 OR search_text ILIKE ANY(CAST(:searchText AS TEXT[])))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -130,7 +130,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             @Param("employmentTypes") Object[] employmentTypes,
             @Param("locations") String[] locations,
             @Param("sources") String[] sources,
-            @Param("keywords") String[] keywords,
+            @Param("searchText") String[] searchText,
             @Param("sortField") String sortField,
             @Param("useSalarySort") boolean useSalarySort ,
             @Param("limit") int limit, @Param("offset") int offset
@@ -143,7 +143,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location ILIKE ANY(CAST(:locations AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
-            AND (COALESCE(ARRAY_LENGTH(CAST(:keywords AS TEXT[]),1),0) = 0 OR tech_keywords && CAST(:keywords AS TEXT[]))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:searchText AS TEXT[]),1),0) = 0 OR search_text ILIKE ANY(CAST(:searchText AS TEXT[])))
         ORDER BY
             CASE
                 WHEN :useSalarySort = true THEN
@@ -167,7 +167,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             @Param("employmentTypes") Object[] employmentTypes,
             @Param("locations") String[] locations,
             @Param("sources") String[] sources,
-            @Param("keywords") String[] keywords,
+            @Param("searchText") String[] searchText,
             @Param("sortField") String sortField,
             @Param("useSalarySort") boolean useSalarySort ,
             @Param("limit") int limit, @Param("offset") int offset
@@ -180,7 +180,7 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
      * @param employmentTypes optional employment type filter
      * @param locations       optional location filter (partial match)
      * @param sources         optional source filter
-     * @param keywords oprional keyword filter
+     * @param searchText oprional keyword filter
      * @return count of jobs matching all filters
      */
     @Query(value = """
@@ -190,14 +190,14 @@ public interface SpringDataJobJpaRepository extends JpaRepository<JobEntity, UUI
             AND (COALESCE(ARRAY_LENGTH(CAST(:employmentTypes AS TEXT[]),1),0) = 0 OR employment_type = ANY(CAST(:employmentTypes AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:locations AS TEXT[]),1),0) = 0 OR location ILIKE ANY(CAST(:locations AS TEXT[])))
             AND (COALESCE(ARRAY_LENGTH(CAST(:sources AS TEXT[]),1),0) = 0 OR source = ANY(CAST(:sources AS TEXT[])))
-            AND (COALESCE(ARRAY_LENGTH(CAST(:keywords AS TEXT[]),1),0) = 0 OR tech_keywords && CAST(:keywords AS TEXT[]))
+            AND (COALESCE(ARRAY_LENGTH(CAST(:searchText AS TEXT[]),1),0) = 0 OR search_text ILIKE ANY(CAST(:searchText AS TEXT[])))
    \s""", nativeQuery = true)
     long countWithFilters(
             @Param("seniorities") String[] seniorities,
             @Param("employmentTypes") String[] employmentTypes,
             @Param("locations") String[] locations,
             @Param("sources") String[] sources,
-            @Param("keywords") String[] keywords
+            @Param("searchText") String[] searchText
     );
 
     @Query(value = """

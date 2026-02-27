@@ -46,6 +46,7 @@ public class AllJobsController {
      * @param employmentType optional filter
      * @param location optional filter
      * @param source optional filter
+     * @param searchText optional filter
      * @param sort sorting in format: field,direction (default: publishedDate,desc)
      *
      * @return paginated list of jobs
@@ -58,7 +59,7 @@ public class AllJobsController {
             @RequestParam(required = false) EmploymentType[] employmentType,
             @RequestParam(required = false) String[] location,
             @RequestParam(required = false) String[] source,
-            @RequestParam(required = false) String[] keyword,
+            @RequestParam(value = "search", required = false) String[] searchText,
             @RequestParam(defaultValue = "publishedDate,desc") String sort
     ) {
         String[] sortParts = sort.split(",");
@@ -83,12 +84,12 @@ public class AllJobsController {
                 employmentType,
                 location,
                 source,
-                keyword,
+                searchText,
                 entitySortField,
                 validatedSortOrder
         );
 
-        long totalElements = allJobsService.countTotal(seniority, employmentType, location, source, keyword);
+        long totalElements = allJobsService.countTotal(seniority, employmentType, location, source, searchText);
 
         List<JobViewDto> dtos = entities.stream().map(mapper::toViewDto).toList();
 

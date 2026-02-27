@@ -65,10 +65,11 @@ public class JobEntity {
     private Instant stateChangedAt;
     @Column(name = "entered_new_at")
     private Instant enteredNewAt;
+    @Column(name = "search_text")
+    private String searchText;
     public JobEntity() {
         // Required by JPA
     }
-
 
     public UUID getId() {
         return id;
@@ -166,9 +167,11 @@ public class JobEntity {
         this.descriptionSnippet = descriptionSnippet;
     }
 
-    public String getCanonicalUrl() {
-        return canonicalUrl;
-    }
+    public String getCanonicalUrl() {return canonicalUrl;}
+
+    public String getSearchText() {return searchText;}
+
+    public void setSearchText(String searchText) {this.searchText = searchText;}
 
     public void setCanonicalUrl(String canonicalUrl) {
         this.canonicalUrl = canonicalUrl;
