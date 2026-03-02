@@ -79,15 +79,16 @@ public class JobIngestService {
         for (Map.Entry<JobIdentity, Job> entry : uniqueJobs.entrySet()) {
             JobIdentity identity = entry.getKey();
             Job job = entry.getValue();
+            String searchText = buildSearchText(job);
 
             Optional<JobEntity> existing = repository.findByIdentity(identity);
 
             if (existing.isEmpty()) {
-                repository.saveNew(job, identity, now);
+                repository.saveNew(job, identity, now, searchText);
                 inserted++;
             } else {
                 UUID existingId = existing.get().getId();
-                repository.updateExisting(existingId, job, now);
+                repository.updateExisting(existingId, job, now, searchText);
                 updated++;
             }
         }
@@ -127,5 +128,22 @@ public class JobIngestService {
                 );
             }
         }
+    }
+
+    private String buildSearchText(Job job) {
+        StringBuilder searchText = new StringBuilder();
+
+        if (job.getTitle() != null) {
+            searchText.append(job.getTitle().toLowerCase()).append(" ");
+        }
+        if (job.getCompany() != null) {
+            searchText.append(job.getCompany().toLowerCase()).append(" ");
+        }
+        if (job.getTechKeywords() != null) {
+            for (String keyword : job.getTechKeywords()) {
+                searchText.append(keyword.toLowerCase()).append(" ");
+            }
+        }
+        return searchText.toString().trim();
     }
 }
