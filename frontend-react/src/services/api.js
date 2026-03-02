@@ -10,7 +10,7 @@ export const jobsApi = {
             employmentType = [],
             location = [],
             source = [],
-            searchTerm = '',
+            search = "",
             sort = 'publishedDate,desc'
         } = params;
 
@@ -22,13 +22,8 @@ export const jobsApi = {
         employmentType.forEach(employmentType => queryParams.append('employmentType', employmentType));
         location.forEach(location => queryParams.append('location', location));
         source.forEach(source => queryParams.append('source', source));
-
-        if(searchTerm) {
-            queryParams.append('searchTerm', searchTerm);
-        }
-
-
-        queryParams.append('sort',sort);
+        queryParams.append('search', search);
+        queryParams.append('sort', sort);
 
 
         const response = await fetch(`${API_BASE_URL}/jobs/all?${queryParams}`);
@@ -37,6 +32,7 @@ export const jobsApi = {
             throw new Error(`HTTP error, status code: ${response.status}`);
         }
 
+        console.log(response);
         return response.json();
     }
 }

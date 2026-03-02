@@ -21,7 +21,7 @@ const Dashboard = () => {
 
     const [jobs, setJobs] = useState([]);
 
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState(localStorage.getItem("searchTerm") || "");
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
     const [pendingFilters, setPendingFilters] = useState({
             seniority: [],
@@ -52,7 +52,7 @@ const Dashboard = () => {
                 page: currentPage,
                 size: itemsPerPage,
                 ...appliedFilters,
-                searchTerm: debouncedSearchTerm,
+                search: debouncedSearchTerm,
                 sort: sortBy
             });
 
