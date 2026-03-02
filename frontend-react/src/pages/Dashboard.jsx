@@ -37,6 +37,10 @@ const Dashboard = () => {
             source: []
         }
     );
+    const [seniorityOptions, setSeniorityOptions] = useState([]);
+    const [employmentTypeOptions, setEmploymentTypeOptions] = useState([]);
+    const [locationOptions, setLocationOptions] = useState([]);
+    const [sourceOptions, setSourceOptions] = useState([]);
     const [sortBy, setSortBy] = useState(localStorage.getItem("sortBy") || "publishedDate,desc");
 
     const fetchJobs = async () => {
@@ -57,6 +61,11 @@ const Dashboard = () => {
             setJobs(data.content || [])
             setCurrentPage(data.page + 1);
             setTotalPages(data.totalPages);
+
+            setSeniorityOptions(data.filters.seniorities);
+            setEmploymentTypeOptions(data.filters.employmentTypes);
+            setLocationOptions(data.filters.locations);
+            setSourceOptions(data.filters.sources);
 
             const newSize = itemsPerPage;
             setItemsPerPage(newSize);
@@ -92,7 +101,7 @@ const Dashboard = () => {
     return (
         <div className={`${themeClasses} min-h-screen flex overflow-hidden`}>
 
-            <FilterSidebar jobs={jobs} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filters={pendingFilters} theme={theme} setCurrentPage={setCurrentPage} setPendingFilters={setPendingFilters} pendingFilters={pendingFilters} setAppliedFilters={setAppliedFilters} appliedFilters={appliedFilters} />
+            <FilterSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}  theme={theme} setCurrentPage={setCurrentPage} setPendingFilters={setPendingFilters} filters={pendingFilters} setAppliedFilters={setAppliedFilters} appliedFilters={appliedFilters} seniorityOptions={seniorityOptions} employmentTypeOptions={employmentTypeOptions} locationOptions={locationOptions} sourceOptions={sourceOptions} />
 
             <div className={`${themeClasses} flex-1 p-5 transition-all`}>
 

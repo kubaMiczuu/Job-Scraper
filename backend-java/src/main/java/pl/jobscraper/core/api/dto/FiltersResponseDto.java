@@ -7,7 +7,7 @@ import java.util.List;
 public record FiltersResponseDto(
         @JsonProperty("seniorities")
         List<String> seniorities,
-        @JsonProperty("emplotmentTypes")
+        @JsonProperty("employmentTypes")
         List<String> employmentTypes,
         @JsonProperty("locations")
         List<String> locations,
