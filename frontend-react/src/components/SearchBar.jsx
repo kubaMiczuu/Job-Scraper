@@ -6,7 +6,7 @@ const SearchBar = ({setSearchTerm, theme}) => {
     const [innerValue, setInnerValue] = useState(localStorage.getItem("searchTerm"));
 
     useEffect(() => {
-        const value = localStorage.getItem("searchTerm");
+        const value = (localStorage.getItem("searchTerm")) || "";
         const normalizedValue = value.replaceAll(",", " ");
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setInnerValue(normalizedValue);
