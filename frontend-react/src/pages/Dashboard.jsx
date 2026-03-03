@@ -105,7 +105,7 @@ const Dashboard = () => {
 
             <div className={`${themeClasses} flex-1 p-5 transition-all`}>
 
-                <div className="relative flex flex-col justify-between items-center w-full mb-8 p-8">
+                <div className="relative flex flex-col justify-between items-center w-full mb-8 p-8 gap-2">
 
                     <Sort theme={theme} setSortBy={setSortBy} sortBy={sortBy}></Sort>
 
