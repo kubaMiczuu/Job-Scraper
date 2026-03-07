@@ -14,7 +14,7 @@ const PagesBar = ({setCurrentPage, currentPage, totalPages, theme}) => {
                     return <span key={index} className={`self-center px-1 font-bold`}>. . .</span>
                 }
                 return (
-                    <PageField key={page} page={page} theme={theme} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+                    <PageField key={index} page={page} theme={theme} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
                 )
             })}
         </>

@@ -2,8 +2,6 @@ export const getPaginationRange = (currentPage, totalPages) => {
     const range = [];
     const rangesWithDots = []
 
-    console.log(currentPage);
-
     range.push(1);
 
     for(let i = currentPage - 2; i <= currentPage + 2; i++) {

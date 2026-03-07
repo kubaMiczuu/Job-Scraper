@@ -1,12 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import FilterCategory from './FilterCategory.jsx';
 
-const FilterSidebar = ({jobs, isOpen, onClose, filters, theme, setCurrentPage, setPendingFilters, pendingFilters, setAppliedFilters, appliedFilters}) => {
-
-    const [seniorityOptions, setSeniorityOptions] = useState([]);
-    const [employmentTypeOptions, setEmploymentTypeOptions] = useState([]);
-    const [locationOptions, setLocationOptions] = useState([]);
-    const [sourceOptions, setSourceOptions] = useState([]);
+const FilterSidebar = ({isOpen, onClose, filters, theme, setCurrentPage, setPendingFilters, setAppliedFilters, appliedFilters, seniorityOptions, sourceOptions, locationOptions, employmentTypeOptions}) => {
 
     const [seniorityExpand, setSeniorityExpand] = useState(false);
     const [employmentTypeExpand, setEmploymentTypeExpand] = useState(false);
@@ -16,23 +11,6 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, theme, setCurrentPage, s
     const themeClasses = theme === 'light'
         ? 'bg-white text-gray-900 border-gray-300'
         : 'bg-gray-800 text-gray-300 border-gray-700';
-
-    useEffect(() => {
-        const uniqueSeniorities = [...new Set(jobs.map(job => job.seniority))].filter(Boolean);
-        setSeniorityOptions(uniqueSeniorities);
-
-        const uniqueEmploymentTypes = [...new Set(jobs.map(job => job.employmentType))].filter(Boolean);
-        setEmploymentTypeOptions(uniqueEmploymentTypes);
-
-        const uniqueLocations = [...new Set(jobs.map(job => {
-            return job.location.split(",")[0].trim();
-        }))].filter(Boolean);
-        setLocationOptions(uniqueLocations);
-
-        const uniqueSources = [...new Set(jobs.map(job => job.source))].filter(Boolean);
-        setSourceOptions(uniqueSources);
-
-    }, [jobs])
 
     const handleExpand = (setExpand) => {
         setExpand(prev => !prev);
@@ -48,7 +26,7 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, theme, setCurrentPage, s
 
     const handleApplyFilters = () => {
         setCurrentPage(1);
-        setAppliedFilters(pendingFilters);
+        setAppliedFilters(filters);
     }
 
     const handleFilterChange = (category, values) => {
@@ -64,7 +42,7 @@ const FilterSidebar = ({jobs, isOpen, onClose, filters, theme, setCurrentPage, s
         });
     }
 
-    const hasUnappliedFilters = JSON.stringify(pendingFilters) !== JSON.stringify(appliedFilters);
+    const hasUnappliedFilters = JSON.stringify(filters) !== JSON.stringify(appliedFilters);
 
 
     return (
