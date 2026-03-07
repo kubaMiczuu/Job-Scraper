@@ -23,6 +23,27 @@ public enum EmploymentType {
     B2B,
 
     /**
+     * Umowa zlecenie (Contract of mandate).
+     */
+    UZ,
+
+    /**
+     * Umowa o dzieło (Contract for specific work).
+     */
+    UOD,
+
+    /**
+     * Permanent employment (mapped from various sources).
+     * Usually means full-time permanent position.
+     */
+    PERMANENT,
+
+    /**
+     * Contract/temporary employment.
+     */
+    CONTRACT,
+
+    /**
      * Training positions and student programs.
      */
     INTERNSHIP,
@@ -30,5 +51,30 @@ public enum EmploymentType {
     /**
      * Any other types, including mandate contracts (pl: Umowa Zlecenie) or unspecified.
      */
-    OTHER
+    OTHER;
+
+    public static EmploymentType fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return OTHER;
+        }
+        String normalized = value.trim().toLowerCase();
+
+        return switch (normalized) {
+            case "b2b", "bussines to bussines " -> B2B;
+            case "permanent", "full-time", "pełny etat", "etat" -> PERMANENT;
+            case "contract", "temporary", "fixed-term", "temporary contract" -> CONTRACT;
+            case "uop", "umowa o prace", "umowa o pracę" -> UOP;
+            case "uz", "umowa zlecenie" -> UZ;
+            case "uod", "umowa o dzieło", "umowa o dzielo" -> UOD;
+            case "internship", "intern", "staż", "staz", "praktyka" -> INTERNSHIP;
+            default -> {
+                try {
+                    yield EmploymentType.valueOf(normalized.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    yield OTHER;  // Unknown type
+                }
+            }
+        };
+    }
+
 }

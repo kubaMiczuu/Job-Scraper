@@ -4,9 +4,11 @@ import org.springframework.stereotype.Component;
 import pl.jobscraper.core.domain.identity.JobIdentity;
 import pl.jobscraper.core.domain.model.Job;
 import pl.jobscraper.core.domain.model.JobState;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
+import java.util.List;
 
 /**
  * Data transformation layer between domain models and persistence entities.
@@ -35,6 +37,8 @@ public class JobEntityMapper {
     public JobEntity toEntity(Job job, JobIdentity identity, JobState state, Instant now) {
         JobEntity entity = new JobEntity();
 
+        List<String> typeNames = job.getEmploymentType().stream().map(Enum::name).toList();
+
         entity.setTitle(job.getTitle());
         entity.setCompany(job.getCompany());
         entity.setLocation(job.getLocation());
@@ -42,7 +46,7 @@ public class JobEntityMapper {
         entity.setPublishedDate(job.getPublishedDate());
         entity.setSource(job.getSource());
         entity.setSeniority(job.getSeniority());
-        entity.setEmploymentType(job.getEmploymentType());
+        entity.setEmploymentTypeFromList(typeNames);
         entity.setTechKeywords(job.getTechKeywords());
         entity.setSalary(job.getSalary());
         entity.setDescriptionSnippet(job.getDescriptionSnippet());
@@ -73,6 +77,9 @@ public class JobEntityMapper {
      */
     public void updateEntityFromJob(JobEntity entity, Job job) {
         // Update only business fields (no state, no timestamps, no identity)
+
+        List<String> typeNames = job.getEmploymentType().stream().map(Enum::name).toList();
+
         entity.setTitle(job.getTitle());
         entity.setCompany(job.getCompany());
         entity.setLocation(job.getLocation());
@@ -80,7 +87,7 @@ public class JobEntityMapper {
         entity.setPublishedDate(job.getPublishedDate());
         entity.setSource(job.getSource());
         entity.setSeniority(job.getSeniority());
-        entity.setEmploymentType(job.getEmploymentType());
+        entity.setEmploymentTypeFromList(typeNames);
         entity.setTechKeywords(job.getTechKeywords());
         entity.setSalary(job.getSalary());
         entity.setDescriptionSnippet(job.getDescriptionSnippet());
@@ -105,11 +112,24 @@ public class JobEntityMapper {
                 .publishedDate(entity.getPublishedDate())
                 .source(entity.getSource())
                 .seniority(entity.getSeniority())
-                .employmentType(entity.getEmploymentType())
+                .employmentType(parseEmploymentTypeFromEntity(entity))
                 .techKeywords(entity.getTechKeywords())
                 .salary(entity.getSalary())
                 .descriptionSnippet(entity.getDescriptionSnippet())
                 .build();
 
+    }
+
+    private List<EmploymentType> parseEmploymentTypeFromEntity(JobEntity entity) {
+        List<String> typeStrings = entity.getEmploymentTypeAsList();
+
+        return typeStrings.stream()
+                .map(typeStr -> {
+                    try{
+                        return EmploymentType.valueOf(typeStr);
+                    }catch(IllegalArgumentException e){
+                        return EmploymentType.OTHER;
+                    }
+                }).toList();
     }
 }

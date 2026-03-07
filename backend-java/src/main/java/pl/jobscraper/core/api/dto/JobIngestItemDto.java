@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import pl.jobscraper.core.domain.model.value.EmploymentType;
 import pl.jobscraper.core.domain.model.value.Seniority;
 
 import java.time.Instant;
@@ -44,7 +43,7 @@ public record JobIngestItemDto(
         Seniority seniority,
 
         @JsonProperty("employmentType")
-        EmploymentType employmentType,
+        String employmentType,
 
         @JsonProperty("techKeywords")
         List<String> techKeywords,

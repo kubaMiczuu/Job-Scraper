@@ -177,4 +177,5 @@ public final class JobIdentity {
     public String toString() {
         return isUrlBased() ? "JobIdentity{url=' " + canonicalUrl +"'}": "JobIdentity{hash=' "+fallbackHash + "'}";
     }
+
 }

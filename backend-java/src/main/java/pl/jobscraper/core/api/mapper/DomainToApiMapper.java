@@ -49,7 +49,7 @@ public class DomainToApiMapper {
                 entity.getPublishedDate(),
                 entity.getSource(),
                 entity.getSeniority(),
-                entity.getEmploymentType(),
+                entity.getEmploymentTypeAsList(),
                 entity.getTechKeywords(),
                 entity.getSalary(),
                 entity.getDescriptionSnippet(),

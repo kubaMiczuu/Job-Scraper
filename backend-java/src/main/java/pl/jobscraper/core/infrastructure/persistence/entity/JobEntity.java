@@ -2,7 +2,6 @@ package pl.jobscraper.core.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import pl.jobscraper.core.domain.model.JobState;
-import pl.jobscraper.core.domain.model.value.EmploymentType;
 import pl.jobscraper.core.domain.model.value.Seniority;
 
 import java.time.Instant;
@@ -41,9 +40,8 @@ public class JobEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "seniority", length = 50)
     private Seniority seniority;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "employment_type", length = 50)
-    private EmploymentType employmentType;
+    @Column(name = "employment_type", length = 200)
+    private String employmentType;
     @Column(name = "tech_keywords", columnDefinition = "TEXT[]")
     private List<String> techKeywords;
     @Column(name = "salary")
@@ -135,11 +133,11 @@ public class JobEntity {
         this.seniority = seniority;
     }
 
-    public EmploymentType getEmploymentType() {
+    public String getEmploymentType() {
         return employmentType;
     }
 
-    public void setEmploymentType(EmploymentType employmentType) {
+    public void setEmploymentType(String employmentType) {
         this.employmentType = employmentType;
     }
 
@@ -223,5 +221,22 @@ public class JobEntity {
 
     public void setEnteredNewAt(Instant enteredNewAt) {
         this.enteredNewAt = enteredNewAt;
+    }
+
+    public void setEmploymentTypeFromList(List<String> types) {
+        if(types == null || types.isEmpty()) {
+            this.employmentType = null;
+        } else{
+            this.employmentType = String.join(",", types);
+        }
+    }
+
+    public List<String> getEmploymentTypeAsList() {
+        if(employmentType == null || employmentType.isBlank()) {
+            return List.of();
+        }
+        return java.util.Arrays.stream(employmentType.split(","))
+                .map(String::trim)
+                .toList();
     }
 }

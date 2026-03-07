@@ -1,7 +1,6 @@
 package pl.jobscraper.core.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pl.jobscraper.core.domain.model.value.EmploymentType;
 import pl.jobscraper.core.domain.model.value.Seniority;
 
 import java.time.Instant;
@@ -28,7 +27,7 @@ public record JobViewDto(
         String source,
         Seniority seniority,
         @JsonProperty("employmentType")
-        EmploymentType employmentType,
+        List<String> employmentType,
         @JsonProperty("techKeywords")
         List<String> techKeywords,
         String salary,

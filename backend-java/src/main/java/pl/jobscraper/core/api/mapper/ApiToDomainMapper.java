@@ -3,6 +3,11 @@ package pl.jobscraper.core.api.mapper;
 import org.springframework.stereotype.Component;
 import pl.jobscraper.core.api.dto.JobIngestItemDto;
 import pl.jobscraper.core.domain.model.Job;
+import pl.jobscraper.core.domain.model.value.EmploymentType;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Mapper from API DTOs to domain objects.
@@ -34,10 +39,23 @@ public class ApiToDomainMapper {
                 .publishedDate(dto.publishedDate())
                 .source(dto.source())
                 .seniority(dto.seniority())
-                .employmentType(dto.employmentType())
+                .employmentType(parseEmploymentType(dto.employmentType()))
                 .techKeywords(dto.techKeywords())
                 .salary(dto.salary())
                 .descriptionSnippet(dto.descriptionSnippet())
                 .build();
+    }
+
+    private List<EmploymentType> parseEmploymentType(String value) {
+        if(value == null || value.isBlank()) {
+            return List.of();
+        }
+        String[] parts = value.split(",");
+
+        return Arrays.stream(parts)
+                .map(String::trim)
+                .map(EmploymentType::fromString)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }

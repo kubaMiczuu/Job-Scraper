@@ -27,7 +27,7 @@ public final class Job {
     //Optional fields
     private final String source;
     private final Seniority seniority;
-    private final EmploymentType employmentType;
+    private final List<EmploymentType> employmentType;
     private final List<String> techKeywords;
     private final String salary;
     private final String descriptionSnippet;
@@ -52,7 +52,7 @@ public final class Job {
         // Assign optional fields
         this.source = builder.source;
         this.seniority = builder.seniority;
-        this.employmentType = builder.employmentType;
+        this.employmentType = builder.employmentType != null ? List.copyOf(builder.employmentType) : List.of();
         this.techKeywords = builder.techKeywords != null ? List.copyOf(builder.techKeywords) : List.of();
         this.salary = builder.salary;
         this.descriptionSnippet = builder.descriptionSnippet;
@@ -82,7 +82,7 @@ public final class Job {
     public Instant getPublishedDate() { return publishedDate; }
     public String getSource() { return source; }
     public Seniority getSeniority() { return seniority; }
-    public EmploymentType getEmploymentType() { return employmentType; }
+    public List<EmploymentType> getEmploymentType() { return employmentType; }
     public List<String> getTechKeywords() { return techKeywords; }
     public String getSalary() { return salary; }
     public String getDescriptionSnippet() { return descriptionSnippet; }
@@ -101,7 +101,7 @@ public final class Job {
         private Instant publishedDate;
         private String source;
         private Seniority seniority;
-        private EmploymentType employmentType;
+        private List<EmploymentType> employmentType;
         private List<String> techKeywords;
         private String salary;
         private String descriptionSnippet;
@@ -115,7 +115,7 @@ public final class Job {
         public Builder publishedDate(Instant publishedDate) {this.publishedDate = publishedDate;return this;}
         public Builder source(String source) {this.source = source;return this;}
         public Builder seniority(Seniority seniority) {this.seniority = seniority;return this;}
-        public Builder employmentType(EmploymentType employmentType) {this.employmentType = employmentType;return this;}
+        public Builder employmentType(List<EmploymentType> employmentType) {this.employmentType = employmentType;return this;}
         public Builder techKeywords(List<String> techKeywords) {this.techKeywords = techKeywords;return this;}
         public Builder salary(String salary) {this.salary = salary;return this;}
         public Builder descriptionSnippet(String descriptionSnippet) {this.descriptionSnippet = descriptionSnippet;return this;}

@@ -1,0 +1,1 @@
+ALTER TABLE jobs ALTER COLUMN employment_type TYPE VARCHAR(200);
