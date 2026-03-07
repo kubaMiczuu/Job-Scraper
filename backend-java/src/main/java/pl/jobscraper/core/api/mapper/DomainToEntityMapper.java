@@ -6,6 +6,7 @@ import pl.jobscraper.core.domain.model.JobState;
 import pl.jobscraper.core.infrastructure.persistence.entity.JobEntity;
 
 import java.time.Instant;
+import java.util.List;
 
 /**
  * Mapper from domain Job to persistence JobEntity.
@@ -33,6 +34,9 @@ public class DomainToEntityMapper {
     public JobEntity toEntity(Job job) {
         JobEntity entity = new JobEntity();
 
+        List<String> typeNames= job.getEmploymentType().stream()
+                .map(Enum::name).toList();
+
         // Map domain fields
         entity.setTitle(job.getTitle());
         entity.setCompany(job.getCompany());
@@ -41,7 +45,7 @@ public class DomainToEntityMapper {
         entity.setPublishedDate(job.getPublishedDate());
         entity.setSource(job.getSource());
         entity.setSeniority(job.getSeniority());
-        entity.setEmploymentType(job.getEmploymentType());
+        entity.setEmploymentTypeFromList(typeNames);
         entity.setTechKeywords(job.getTechKeywords());
         entity.setSalary(job.getSalary());
         entity.setDescriptionSnippet(job.getDescriptionSnippet());
